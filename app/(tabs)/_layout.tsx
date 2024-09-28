@@ -1,35 +1,88 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import { Image, View } from "react-native";
+import React from "react";
+import { Colors, Viewport } from "@/styles/styles";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+const renderIcon = (iconSource: any, focused: boolean) => {
+  return (
+    <View style={{ alignItems: "center" }}>
+      <Image source={iconSource} />
+      {focused && (
+        <View
+          style={{
+            height: 3,
+            backgroundColor: Colors.activeAccent,
+            width: 40,
+            marginTop: 4,
+          }}
+        />
+      )}
+    </View>
+  );
+};
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-      }}>
+        tabBarStyle: {
+          height: Viewport.height * 0.09,
+          borderWidth: 1,
+          borderRadius: 10,
+          width: Viewport.width * 0.9,
+          backgroundColor: Colors.tertiaryBackground,
+          marginBottom: Viewport.height * 0.02,
+          alignSelf: "center",
+        },
+        tabBarShowLabel: false,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
+          tabBarIcon: ({ color, focused }) => {
+            const iconSource = focused
+              ? require("@/assets/icons/navigation/calendar/active.png")
+              : require("@/assets/icons/navigation/calendar/inactive.png");
+            return renderIcon(iconSource, focused);
+          },
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="consultation"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+          tabBarIcon: ({ color, focused }) => {
+            const iconSource = focused
+              ? require("@/assets/icons/navigation/consultation/active.png")
+              : require("@/assets/icons/navigation/consultation/inactive.png");
+
+            return renderIcon(iconSource, focused);
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="notification"
+        options={{
+          tabBarIcon: ({ color, focused }) => {
+            const iconSource = focused
+              ? require("@/assets/icons/navigation/notification/active.png")
+              : require("@/assets/icons/navigation/notification/inactive.png");
+
+            return renderIcon(iconSource, focused);
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: ({ color, focused }) => {
+            const iconSource = focused
+              ? require("@/assets/icons/navigation/profile/active.png")
+              : require("@/assets/icons/navigation/profile/inactive.png");
+
+            return renderIcon(iconSource, focused);
+          },
         }}
       />
     </Tabs>
