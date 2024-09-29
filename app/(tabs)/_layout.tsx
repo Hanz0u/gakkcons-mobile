@@ -30,9 +30,9 @@ export default function TabLayout() {
           height: Viewport.height * 0.09,
           borderWidth: 1,
           borderRadius: 10,
-          width: Viewport.width * 0.9,
+          width: Viewport.width * 0.93,
           backgroundColor: Colors.tertiaryBackground,
-          marginBottom: Viewport.height * 0.02,
+          marginBottom: Viewport.height * 0.01,
           alignSelf: "center",
         },
         tabBarShowLabel: false,
@@ -41,7 +41,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color, focused }) => {
+          tabBarIcon: ({ focused }) => {
             const iconSource = focused
               ? require("@/assets/icons/navigation/calendar/active.png")
               : require("@/assets/icons/navigation/calendar/inactive.png");
@@ -52,7 +52,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="consultation"
         options={{
-          tabBarIcon: ({ color, focused }) => {
+          tabBarIcon: ({ focused }) => {
             const iconSource = focused
               ? require("@/assets/icons/navigation/consultation/active.png")
               : require("@/assets/icons/navigation/consultation/inactive.png");
@@ -64,7 +64,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="notification"
         options={{
-          tabBarIcon: ({ color, focused }) => {
+          tabBarIcon: ({ focused }) => {
             const iconSource = focused
               ? require("@/assets/icons/navigation/notification/active.png")
               : require("@/assets/icons/navigation/notification/inactive.png");
@@ -76,7 +76,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color, focused }) => {
+          tabBarIcon: ({ focused }) => {
             const iconSource = focused
               ? require("@/assets/icons/navigation/profile/active.png")
               : require("@/assets/icons/navigation/profile/inactive.png");
