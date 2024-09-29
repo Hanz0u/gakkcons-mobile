@@ -15,7 +15,7 @@ export const FontSizes = {
 };
 
 export const Colors = {
-  primaryBackground: "#F5F5F5",
+  primaryBackground: "#E3E1D9",
   secondaryBackground: "#FFFFFF",
   primaryText: "#000000",
   secondaryText: "#646464",
