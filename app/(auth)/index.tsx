@@ -53,7 +53,7 @@ const LoginPage = () => {
       <View style={styles.buttonContainer}>
         <Button
           mode="text"
-          onPress={() => console.log("Sign In pressed")}
+          onPress={() => router.push("/register")}
           style={styles.signInButton}
           labelStyle={styles.signInLabel}
         >
