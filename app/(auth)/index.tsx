@@ -1,13 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { TextInput, Button } from "react-native-paper";
+import { useRouter } from "expo-router";
 
 const LoginPage = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
     // Back-end Constraint logic
+    if (email === "student") {
+      router.push("/student");
+    } else if (email === "teacher") {
+      router.push("/teacher");
+    } else {
+      Alert.alert(
+        "Temporary",
+        "Please type 'student' in the 'Email/School ID' field to be redirected to the student tab, or 'teacher' to be redirected to the teacher tab."
+      );
+    }
     console.log("Email:", email);
     console.log("Password:", password);
   };
