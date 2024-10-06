@@ -11,7 +11,7 @@ const renderIcon = (iconSource: any, focused: boolean) => {
         <View
           style={{
             height: 3,
-            backgroundColor: Colors.activeAccent,
+            backgroundColor: "#4C8A98",
             width: 40,
             marginTop: 4,
           }}
@@ -36,6 +36,7 @@ export default function TabLayout() {
           alignSelf: "center",
         },
         tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen
