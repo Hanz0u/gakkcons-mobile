@@ -21,7 +21,7 @@ const renderIcon = (iconSource: any, focused: boolean) => {
   );
 };
 
-export default function TabLayout() {
+export default function StudentTabLayout() {
   return (
     <Tabs
       screenOptions={{
