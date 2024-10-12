@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
-const LoginPage = () => {
+
+export default function Index() {
+
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -10,12 +15,13 @@ const LoginPage = () => {
     // Back-end Constraint logic
     console.log('Email:', email);
     console.log('Password:', password);
+    router.push('/(tabs)')
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/images/logo.png')}
+        source={require( "../../assets/images/logo2.png")}
         style={styles.logo}
       />
       <Text style={styles.title}>LOGIN</Text>
@@ -41,7 +47,7 @@ const LoginPage = () => {
       <View style={styles.buttonContainer}>
         <Button 
           mode="text" 
-          onPress={() => console.log('Sign In pressed')} 
+          onPress={() => router.push('./SignUpPage')} 
           style={styles.signInButton} 
           labelStyle={styles.signInLabel} 
         >
@@ -114,5 +120,3 @@ const styles = StyleSheet.create({
     textTransform: 'none',
   },
 });
-
-export default LoginPage;
