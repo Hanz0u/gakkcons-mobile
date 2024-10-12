@@ -27,7 +27,7 @@ const LoginPage = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/logo.png")}
+        source={require("../../assets/images/logo2.png")}
         style={styles.logo}
       />
       <Text style={styles.title}>LOGIN</Text>
@@ -53,7 +53,7 @@ const LoginPage = () => {
       <View style={styles.buttonContainer}>
         <Button
           mode="text"
-          onPress={() => router.push("/register")}
+          onPress={() => router.push("./SignUpPage")}
           style={styles.signInButton}
           labelStyle={styles.signInLabel}
         >

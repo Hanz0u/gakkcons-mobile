@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
-const SignUpPage3 = () => {
-  
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
+const SignUpPage1 = () => {
+
+  const router = useRouter();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
 
   const handleSignUp = () => {
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
+    console.log('First Name:', firstName);
+    console.log('Last Name:', lastName);
     // Add your sign-up logic here (API call)
   };
 
@@ -24,39 +29,36 @@ const SignUpPage3 = () => {
 
       <Text style={styles.title}>REGISTRATION</Text>
 
-      {/* Password Input */}
-      <Text style={styles.label}>Password</Text>
+      {/* Info Inputs */}
+      <Text style={styles.label}>Name</Text>
       <TextInput
-        label="Password"
-        value={password}
-        onChangeText={text => setPassword(text)}
-        secureTextEntry
+        label="First Name"
+        value={firstName}
+        onChangeText={text => setFirstName(text)}
+        style={styles.input}
+        mode="outlined"
+        outlineColor="#282726" 
+        theme={{ colors: { primary: '#282726' } }} 
+      />
+      <TextInput
+        label="Last Name"
+        value={lastName}
+        onChangeText={text => setLastName(text)}
         style={styles.input}
         mode="outlined"
         outlineColor="#282726" 
         theme={{ colors: { primary: '#282726' } }} 
       />
 
-      {/* Confirm Password Input */}
-      <TextInput
-        label="Confirm Password"
-        value={confirmPassword}
-        onChangeText={text => setConfirmPassword(text)}
-        secureTextEntry
-        style={styles.input}
-        mode="outlined"
-        outlineColor="#282726" 
-        theme={{ colors: { primary: '#282726' } }} 
-      />
-
-      {/* Submit Button */}
+ 
+      {/* Next Button */}
       <Button 
         mode="contained" 
-        onPress={handleSignUp} 
+        onPress={() => router.navigate('./SignUpPage2')}
         style={styles.button} 
         buttonColor="#282726" 
       >
-        SUBMIT
+        NEXT
       </Button>
     </View>
   );
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#FFFFFF', 
+    backgroundColor: '#f5f5f5', 
   },
   logoContainer: {
     alignItems: 'flex-start',
@@ -75,7 +77,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 120, 
-    height: 120, 
+    height: 120,
+    marginBottom: 10,
     resizeMode: 'contain', 
   },
   title: {
@@ -90,13 +93,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    marginBottom: 15,
+    marginBottom: 17,
   },
   button: {
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 12,
+    marginLeft: 230,
   },
 });
 
-export default SignUpPage3;
+export default SignUpPage1;

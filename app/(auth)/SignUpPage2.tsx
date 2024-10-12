@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
-const SignUpPage3 = () => {
-  
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+const SignUpPage2 = () => {
 
-  const handleSignUp = () => {
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
+  const router = useRouter();
+
+  const [Id, setId] = useState('');
+  const [email, setEmail] = useState('');
+  const [pnum, setpnum] = useState('');
+
+  const handleSignUp = () => {  
+    console.log('University ID:', Id);
+    console.log('Email:', email);
+    console.log('Phone number:', pnum);
     // Add your sign-up logic here (API call)
   };
 
@@ -24,12 +29,23 @@ const SignUpPage3 = () => {
 
       <Text style={styles.title}>REGISTRATION</Text>
 
-      {/* Password Input */}
-      <Text style={styles.label}>Password</Text>
+      {/* Email Input */}
+      <Text style={styles.label}>Educational Institution</Text>
       <TextInput
-        label="Password"
-        value={password}
-        onChangeText={text => setPassword(text)}
+        label="Email"
+        value={email}
+        onChangeText={text => setEmail(text)}
+        style={styles.input}
+        mode="outlined"
+        outlineColor="#282726" 
+        theme={{ colors: { primary: '#282726' } }} 
+      />
+
+      {/* ID Input */}
+      <TextInput
+        label="University ID"
+        value={Id}
+        onChangeText={text => setId(text)}
         secureTextEntry
         style={styles.input}
         mode="outlined"
@@ -37,11 +53,11 @@ const SignUpPage3 = () => {
         theme={{ colors: { primary: '#282726' } }} 
       />
 
-      {/* Confirm Password Input */}
+      {/* Phone number Input */}
       <TextInput
-        label="Confirm Password"
-        value={confirmPassword}
-        onChangeText={text => setConfirmPassword(text)}
+        label="Phone number"
+        value={pnum}
+        onChangeText={text => setpnum(text)}
         secureTextEntry
         style={styles.input}
         mode="outlined"
@@ -49,14 +65,14 @@ const SignUpPage3 = () => {
         theme={{ colors: { primary: '#282726' } }} 
       />
 
-      {/* Submit Button */}
+      {/* Next Button */}
       <Button 
         mode="contained" 
-        onPress={handleSignUp} 
+        onPress={() => router.navigate('./SignUpPage3')}
         style={styles.button} 
         buttonColor="#282726" 
       >
-        SUBMIT
+        NEXT
       </Button>
     </View>
   );
@@ -96,7 +112,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 12,
+    marginLeft: 230,
   },
 });
 
-export default SignUpPage3;
+export default SignUpPage2;
