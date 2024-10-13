@@ -75,7 +75,7 @@ export default function StudentTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="student-profile"
         options={{
           tabBarIcon: ({ focused }) => {
             const iconSource = focused
