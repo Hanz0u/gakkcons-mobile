@@ -23,9 +23,10 @@ export const Colors = {
   inactiveElement: "#A7A7A7",
   tertiaryBackground: "#282726",
   quaternaryBackground: "#D1C8C3",
-  success: "#00CC33",
+  success: "#219726",
   danger: "#FF3300",
   activeAccent: "#07181F",
   inactiveAccent: "#D1C8C3",
   buttonBGColor: "#9BA0A1",
+  error: "#DF1616",
 };
