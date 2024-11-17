@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Colors, FontSizes, Viewport } from "@/styles/styles";
 
@@ -93,64 +93,97 @@ export default function ConsultationQueueScreen() {
             style={{
               backgroundColor: Colors.quaternaryBackground,
               width: Viewport.width * 0.8,
-              height: Viewport.height * 0.2,
+              height: Viewport.height * 0.23,
               borderRadius: 20,
-              flexDirection: "row",
+              flexDirection: "column",
               paddingHorizontal: 20,
               paddingTop: 30,
-              gap: 20,
+              gap: 10,
             }}
           >
-            <View
-              style={{ flexDirection: "column", alignItems: "center", gap: 5 }}
-            >
-              <FontAwesome5 name="user-circle" size={70} color="black" />
-              <Text
-                style={{
-                  letterSpacing: 0,
-                  fontSize: FontSizes.tiny,
-                  fontWeight: "semibold",
-                }}
-              >
-                ID: {consult.student_id}
-              </Text>
-            </View>
-            <View
-              style={{ flexDirection: "column", alignItems: "center", gap: 5 }}
-            >
-              <Text
-                style={{
-                  fontFamily: "Montserrat",
-                  fontSize: FontSizes.medium,
-                  fontWeight: "bold",
-                  alignSelf: "flex-start",
-                }}
-              >
-                {consult.student_name}
-              </Text>
+            <View style={{ flexDirection: "row", gap: 20 }}>
               <View
                 style={{
-                  backgroundColor: "white",
-                  width: Viewport.width * 0.4,
-                  height: Viewport.height * 0.07,
-                  borderRadius: 10,
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "center",
+                  gap: 5,
+                }}
+              >
+                <FontAwesome5 name="user-circle" size={70} color="black" />
+                <Text
+                  style={{
+                    letterSpacing: 0,
+                    fontSize: FontSizes.tiny,
+                    fontWeight: "semibold",
+                  }}
+                >
+                  ID: {consult.student_id}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 5,
                 }}
               >
                 <Text
                   style={{
-                    textAlign: "center",
                     fontFamily: "Montserrat",
-                    fontSize: FontSizes.small,
+                    fontSize: FontSizes.medium,
                     fontWeight: "bold",
-                    color: Colors.success,
+                    alignSelf: "flex-start",
                   }}
                 >
-                  CONSULTATION ONGOING
+                  {consult.student_name}
                 </Text>
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    width: Viewport.width * 0.4,
+                    height: Viewport.height * 0.07,
+                    borderRadius: 10,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Montserrat",
+                      fontSize: FontSizes.small,
+                      fontWeight: "bold",
+                      color: Colors.success,
+                    }}
+                  >
+                    CONSULTATION ONGOING
+                  </Text>
+                </View>
               </View>
             </View>
+
+            <TouchableOpacity
+              style={{
+                width: Viewport.width * 0.3,
+                height: Viewport.height * 0.04,
+                backgroundColor: Colors.success,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+                alignSelf: "flex-end",
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: "Montserrat",
+                  fontSize: FontSizes.small,
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+              >
+                DONE
+              </Text>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
