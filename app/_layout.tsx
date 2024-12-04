@@ -25,8 +25,7 @@ export default function RootLayout() {
   return (
     <Stack initialRouteName="(auth)" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="student" />
-      <Stack.Screen name="teacher" />
+      <Stack.Screen name="tabs" />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

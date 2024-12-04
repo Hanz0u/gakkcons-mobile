@@ -2,7 +2,7 @@ import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import { Feather } from "@expo/vector-icons";
 import { Text, View, Image, TouchableOpacity } from "react-native";
 
-export default function StudentProfileScreen() {
+export default function ProfileScreen() {
   return (
     <>
       <View
