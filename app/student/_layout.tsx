@@ -44,20 +44,8 @@ export default function StudentTabLayout() {
         options={{
           tabBarIcon: ({ focused }) => {
             const iconSource = focused
-              ? require("@/assets/icons/navigation/calendar/active.png")
-              : require("@/assets/icons/navigation/calendar/inactive.png");
-            return renderIcon(iconSource, focused);
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="consultation"
-        options={{
-          tabBarIcon: ({ focused }) => {
-            const iconSource = focused
               ? require("@/assets/icons/navigation/consultation/active.png")
               : require("@/assets/icons/navigation/consultation/inactive.png");
-
             return renderIcon(iconSource, focused);
           },
         }}
