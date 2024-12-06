@@ -21,7 +21,7 @@ const renderIcon = (iconSource: any, focused: boolean) => {
   );
 };
 
-export default function StudentTabLayout() {
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
@@ -63,7 +63,7 @@ export default function StudentTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="student-profile"
+        name="profile"
         options={{
           tabBarIcon: ({ focused }) => {
             const iconSource = focused
