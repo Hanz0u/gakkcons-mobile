@@ -2,26 +2,16 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { Viewport } from "@/styles/styles";
 
 const LoginPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // Back-end Constraint logic
-    if (email === "student") {
-      router.push("/student");
-    } else if (email === "teacher") {
-      router.push("/teacher");
-    } else {
-      Alert.alert(
-        "Temporary",
-        "Please type 'student' in the 'Email/School ID' field to be redirected to the student tab, or 'teacher' to be redirected to the teacher tab."
-      );
-    }
-    console.log("Email:", email);
-    console.log("Password:", password);
+    router.push("/tabs");
   };
 
   return (
@@ -30,9 +20,9 @@ const LoginPage = () => {
         source={require("../../assets/images/logo2.png")}
         style={styles.logo}
       />
-      <Text style={styles.title}>LOGIN</Text>
+      <Text style={styles.title}>SIGN IN</Text>
       <TextInput
-        label="Email/School ID"
+        label="Email"
         value={email}
         onChangeText={(text) => setEmail(text)}
         style={styles.input}
@@ -44,20 +34,26 @@ const LoginPage = () => {
         label="Password"
         value={password}
         onChangeText={(text) => setPassword(text)}
-        secureTextEntry
+        secureTextEntry={!showPassword}
         style={styles.input}
         mode="outlined"
         outlineColor="#282726"
         theme={{ colors: { primary: "#282726" } }}
+        right={
+          <TextInput.Icon
+            icon={showPassword ? "eye-off" : "eye"}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        }
       />
       <View style={styles.buttonContainer}>
         <Button
           mode="text"
-          onPress={() => router.push("./SignUpPage")}
-          style={styles.signInButton}
-          labelStyle={styles.signInLabel}
+          onPress={() => router.push("/(auth)/ForgotPassword")}
+          style={styles.forgotButton}
+          labelStyle={styles.forgotLabel}
         >
-          Register
+          Forgot Password?
         </Button>
         <Button
           mode="contained"
@@ -68,6 +64,17 @@ const LoginPage = () => {
         >
           LOGIN
         </Button>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text>Don't have an account?</Text>
+          <Button
+            mode="text"
+            onPress={() => router.push("/(auth)/SignUp")}
+            style={styles.signInButton}
+            labelStyle={styles.signInLabel}
+          >
+            Sign up
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -76,9 +83,10 @@ const LoginPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: Viewport.width * 0.8,
     justifyContent: "center",
-    padding: 16,
     backgroundColor: "#f5f5f5",
+    alignSelf: "center",
   },
   logo: {
     width: 100,
@@ -93,37 +101,41 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   input: {
-    marginBottom: 17,
+    marginBottom: 10,
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
     alignItems: "center",
-    marginTop: 12,
+    marginTop: 0,
   },
   button: {
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 10,
     flexGrow: 1,
-    marginLeft: 150,
+    width: Viewport.width * 0.8,
   },
   buttonLabel: {
     fontWeight: "bold",
     textTransform: "uppercase",
   },
   signInButton: {
-    borderRadius: 8,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
     backgroundColor: "transparent",
-    flexGrow: 1,
   },
   signInLabel: {
     color: "#282726",
     fontSize: 15,
     marginLeft: 7,
-    textTransform: "none",
+    textDecorationLine: "underline",
+  },
+  forgotButton: {
+    backgroundColor: "transparent",
+    alignSelf: "flex-end",
+  },
+  forgotLabel: {
+    color: "#282726",
+    fontSize: 12,
+    textDecorationLine: "underline",
   },
 });
 
