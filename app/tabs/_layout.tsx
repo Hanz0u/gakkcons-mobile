@@ -21,7 +21,7 @@ const renderIcon = (iconSource: any, focused: boolean) => {
   );
 };
 
-export default function TeacherTabLayout() {
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
@@ -44,26 +44,26 @@ export default function TeacherTabLayout() {
         options={{
           tabBarIcon: ({ focused }) => {
             const iconSource = focused
-              ? require("@/assets/icons/navigation/queue/active.png")
-              : require("@/assets/icons/navigation/queue/inactive.png");
+              ? require("@/assets/icons/navigation/consultation/active.png")
+              : require("@/assets/icons/navigation/consultation/inactive.png");
             return renderIcon(iconSource, focused);
           },
         }}
       />
       <Tabs.Screen
-        name="consultation-queue"
+        name="notification"
         options={{
           tabBarIcon: ({ focused }) => {
             const iconSource = focused
-              ? require("@/assets/icons/navigation/selected-queue/active.png")
-              : require("@/assets/icons/navigation/selected-queue/inactive.png");
+              ? require("@/assets/icons/navigation/notification/active.png")
+              : require("@/assets/icons/navigation/notification/inactive.png");
 
             return renderIcon(iconSource, focused);
           },
         }}
       />
       <Tabs.Screen
-        name="teacher-profile"
+        name="profile"
         options={{
           tabBarIcon: ({ focused }) => {
             const iconSource = focused
