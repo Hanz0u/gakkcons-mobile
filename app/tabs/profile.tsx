@@ -1,59 +1,53 @@
+import EditProfile from "@/components/EditProfile";
 import { Colors, FontSizes, Viewport } from "@/styles/styles";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import { Text, View, Image, TouchableOpacity } from "react-native";
+import { useState } from "react";
 
 export default function ProfileScreen() {
+  const [isEditPressed, setIsEditPressed] = useState<Boolean>(false);
+
   return (
     <>
       <View
         style={{
-          flex: 1,
           flexDirection: "column",
-          gap: 20,
-          paddingTop: Viewport.height * 0.08,
+          width: Viewport.width * 1,
           alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          gap: isEditPressed ? 30 : 0,
         }}
       >
-        <View style={{ width: Viewport.width * 0.9 }}>
-          <TouchableOpacity>
-            <Feather
-              name="settings"
-              size={38}
-              color="black"
-              style={{ alignSelf: "flex-end" }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "column",
-            width: Viewport.width * 0.9,
-            alignItems: "center",
-          }}
-        >
-          <View style={{ position: "relative" }}>
-            <Image
-              source={require("@/assets/images/default-avatar.png")}
-              style={{
-                borderRadius: 100,
-                width: Viewport.width * 0.45,
-                height: Viewport.height * 0.23,
-              }}
-              resizeMode="contain"
-            />
-            <TouchableOpacity
-              style={{
-                position: "absolute",
-                top: Viewport.height * 0.2,
-                width: Viewport.width * 0.2,
-                height: Viewport.height * 0.06,
-                backgroundColor: "#9BA0A1",
-                alignItems: "center",
-                justifyContent: "center",
-                alignSelf: "center",
-                borderRadius: 10,
-              }}
-            >
+        <View style={{ position: "relative" }}>
+          <Image
+            source={require("@/assets/images/default-avatar.png")}
+            style={{
+              borderRadius: 100,
+              width: Viewport.width * 0.45,
+              height: Viewport.height * 0.23,
+            }}
+            resizeMode="contain"
+          />
+
+          <TouchableOpacity
+            onPress={() => setIsEditPressed(true)}
+            style={{
+              position: "absolute",
+              top: isEditPressed
+                ? Viewport.height * 0.18
+                : Viewport.height * 0.2,
+              padding: isEditPressed ? 20 : 10,
+              backgroundColor: "#9BA0A1",
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              borderRadius: isEditPressed ? 100 : 10,
+            }}
+          >
+            {isEditPressed ? (
+              <AntDesign name="picture" size={24} color="white" />
+            ) : (
               <Text
                 style={{
                   color: "white",
@@ -64,77 +58,63 @@ export default function ProfileScreen() {
               >
                 EDIT
               </Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{
-              marginTop: Viewport.height * 0.04,
-              fontSize: FontSizes.extraLarge,
-              fontWeight: "bold",
-              color: "#282726",
-            }}
-          >
-            STUDENT
-          </Text>
-          <View style={{ flexDirection: "row", gap: 20 }}>
+            )}
+          </TouchableOpacity>
+        </View>
+        {isEditPressed ? (
+          <EditProfile onSubmit={() => setIsEditPressed(false)} />
+        ) : (
+          <>
             <Text
               style={{
-                fontSize: FontSizes.small,
+                marginTop: Viewport.height * 0.04,
+                fontSize: FontSizes.extraLarge,
+                fontWeight: "bold",
                 color: "#282726",
               }}
             >
-              Student ID No.:
+              STUDENT
             </Text>
-            <Text
-              style={{
-                fontSize: FontSizes.small,
-                color: "#282726",
-              }}
-            >
-              20XXXXXXXX
-            </Text>
-          </View>
-          <View
-            style={{
-              marginTop: Viewport.height * 0.05,
-              backgroundColor: "#282726",
-              width: Viewport.width * 0.9,
-              height: Viewport.height * 0.4,
-              borderRadius: 10,
-              alignItems: "center",
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: Viewport.width * 0.8,
-                padding: 10,
-              }}
-            >
+            <View style={{ flexDirection: "row", gap: 20 }}>
               <Text
                 style={{
-                  width: Viewport.width * 0.45,
                   fontSize: FontSizes.small,
-                  fontFamily: "Montserrat",
-                  fontWeight: "semibold",
+                  color: "#282726",
+                }}
+              >
+                Email:
+              </Text>
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
+                  color: "#282726",
+                }}
+              >
+                student01@mail.com
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors.error,
+                flexDirection: "row",
+                padding: 15,
+                gap: 10,
+                borderRadius: 10,
+                marginTop: Viewport.height * 0.04,
+              }}
+            >
+              <Feather name="log-out" size={24} color="white" />
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
                   color: "white",
                 }}
               >
-                Consultation Request Details
+                Log out
               </Text>
-              <Image source={require("@/assets/icons/clipboard-check.png")} />
-            </View>
-            <View
-              style={{
-                backgroundColor: Colors.quaternaryBackground,
-                width: Viewport.width * 0.8,
-                height: Viewport.height * 0.4,
-                borderRadius: 10,
-              }}
-            ></View>
-          </View>
-        </View>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </>
   );
