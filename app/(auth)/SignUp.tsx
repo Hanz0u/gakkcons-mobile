@@ -33,7 +33,7 @@ const SignUpPage = () => {
   };
   const handleWelcomeModalClose = () => {
     setIsWelcomeModalVisible(false);
-    router.push("/(auth)/");
+    router.push("/(auth)");
   };
 
   const handleSignUp = () => {
