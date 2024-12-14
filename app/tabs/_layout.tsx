@@ -27,6 +27,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
+          paddingTop: Viewport.height * 0.02,
           height: Viewport.height * 0.09,
           borderWidth: 1,
           borderRadius: 10,

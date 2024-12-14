@@ -8,6 +8,7 @@
     "icon": "./assets/images/logo2.png",
     "scheme": "gakkco",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/logo2.png",
       "resizeMode": "contain",
@@ -27,10 +28,7 @@
       "output": "static",
       "favicon": "./assets/images/logo2.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font"
-    ],
+    "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true
     }
