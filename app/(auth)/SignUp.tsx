@@ -1,46 +1,180 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { TextInput, Button } from "react-native-paper";
+import { useToast } from "react-native-toast-notifications";
 import { useRouter } from "expo-router";
 import { Viewport } from "@/styles/styles";
 import CustomizedModal from "@/components/CustomizedModal";
 import { TouchableOpacity } from "react-native";
+import { useSignupUser, useVerifyUser } from "@/api/auth/auth.hooks";
+import { validateInputs } from "@/utils/validations";
 
 const SignUpPage = () => {
   const router = useRouter();
+  const toast = useToast();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [data, setData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    userType: "student",
+  });
+
+  const {
+    mutate: signupMutate,
+    isSuccess: isSignupSucess,
+    isPending: isSignupPending,
+    isError: isSignupError,
+    error: signUpErrors,
+  } = useSignupUser();
+  const {
+    mutate: verifyMutate,
+    isSuccess: isVerifySucess,
+    isPending: isVerifyPending,
+    isError: isVerifyError,
+    error: verifyErrors,
+  } = useVerifyUser();
+
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCheckEmailVisible, setIsCheckEmailVisible] = useState(false);
   const [isVerificationCodeVisible, setIsVerificationCodeVisible] =
     useState(false);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState<any>("");
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
+  const [signupValidationErrors, setSignupValidationErrors] = useState<any>({});
 
   const handleCheckEmailClose = () => {
     setIsCheckEmailVisible(false);
     setIsVerificationCodeVisible(true);
   };
 
-  const handleVerificationCodeClose = () => {
-    setIsVerificationCodeVisible(false);
-    setIsWelcomeModalVisible(true);
-  };
   const handleWelcomeModalClose = () => {
     setIsWelcomeModalVisible(false);
     router.push("/(auth)");
   };
 
   const handleSignUp = () => {
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    setIsCheckEmailVisible(true);
+    const validationErrors = validateInputs(data, confirmPassword);
+    if (Object.keys(validationErrors).length > 0) {
+      setSignupValidationErrors(validationErrors);
+      return;
+    }
+    signupMutate(data);
   };
+
+  useEffect(() => {
+    let id: any;
+
+    if (isSignupPending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
+
+      if (isSignupSucess) {
+        setIsCheckEmailVisible(true);
+      }
+
+      if (isSignupError) {
+        toast.show(signUpErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [isSignupPending, isSignupSucess, isSignupError, signUpErrors]);
+
+  const nextInputRef: any = Array(6)
+    .fill(null)
+    .map(() => React.createRef());
+
+  const handleCodeChange = (text: any, index: any) => {
+    const newCode: any = [...code];
+    newCode[index] = text;
+    setCode(newCode);
+
+    if (text && index < 5) {
+      nextInputRef[index + 1]?.current?.focus();
+    }
+  };
+
+  const handleKeyPress = (nativeEvent: any, index: any) => {
+    if (nativeEvent.key === "Backspace") {
+      const newCode: any = [...code];
+      newCode[index] = "";
+      setCode(newCode);
+
+      if (index > 0) {
+        nextInputRef[index - 1]?.current?.focus();
+      }
+    }
+  };
+
+  const handleVerificationCodeSubmit = () => {
+    const singleStringCode = code.join("");
+    verifyMutate({ email: data.email, verificationCode: singleStringCode });
+  };
+
+  useEffect(() => {
+    let id: any;
+
+    if (isVerifyPending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
+
+      if (isVerifySucess) {
+        setIsVerificationCodeVisible(false);
+        setIsWelcomeModalVisible(true);
+      }
+
+      if (isVerifyError) {
+        setIsVerificationCodeVisible(true);
+        toast.show(verifyErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [isVerifyPending, isVerifySucess, isVerifyError, verifyErrors]);
 
   return (
     <>
@@ -55,35 +189,68 @@ const SignUpPage = () => {
         <Text style={styles.title}>REGISTRATION</Text>
         <TextInput
           label="First Name"
-          value={firstName}
-          onChangeText={(text) => setFirstName(text)}
+          value={data.firstName}
+          onChangeText={(text) =>
+            setData((prevState) => ({
+              ...prevState,
+              firstName: text,
+            }))
+          }
           style={styles.input}
           mode="outlined"
           outlineColor="#282726"
           theme={{ colors: { primary: "#282726" } }}
         />
+        {signupValidationErrors.firstName && (
+          <Text style={styles.errorText}>
+            {signupValidationErrors.firstName}
+          </Text>
+        )}
         <TextInput
           label="Last Name"
-          value={lastName}
-          onChangeText={(text) => setLastName(text)}
+          value={data.lastName}
+          onChangeText={(text) =>
+            setData((prevState) => ({
+              ...prevState,
+              lastName: text,
+            }))
+          }
           style={styles.input}
           mode="outlined"
           outlineColor="#282726"
           theme={{ colors: { primary: "#282726" } }}
         />
+        {signupValidationErrors.lastName && (
+          <Text style={styles.errorText}>
+            {signupValidationErrors.lastName}
+          </Text>
+        )}
         <TextInput
           label="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
+          value={data.email}
+          onChangeText={(text) =>
+            setData((prevState) => ({
+              ...prevState,
+              email: text,
+            }))
+          }
           style={styles.input}
           mode="outlined"
           outlineColor="#282726"
           theme={{ colors: { primary: "#282726" } }}
         />
+        {signupValidationErrors.email && (
+          <Text style={styles.errorText}>{signupValidationErrors.email}</Text>
+        )}
         <TextInput
           label="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
+          value={data.password}
+          onChangeText={(text) =>
+            setData((prevState) => ({
+              ...prevState,
+              password: text,
+            }))
+          }
           secureTextEntry={!showPassword}
           style={styles.input}
           mode="outlined"
@@ -96,6 +263,11 @@ const SignUpPage = () => {
             />
           }
         />
+        {signupValidationErrors.password && (
+          <Text style={styles.errorText}>
+            {signupValidationErrors.password}
+          </Text>
+        )}
         <TextInput
           label="Confirm Password"
           value={confirmPassword}
@@ -112,18 +284,21 @@ const SignUpPage = () => {
             />
           }
         />
+        {signupValidationErrors.confirmPassword && (
+          <Text style={styles.errorText}>
+            {signupValidationErrors.confirmPassword}
+          </Text>
+        )}
 
-        {/* Next Button */}
         <Button
           mode="contained"
-          onPress={() => handleSignUp()}
+          onPress={handleSignUp}
           style={styles.button}
           buttonColor="#282726"
         >
           SUBMIT
         </Button>
       </View>
-      {/* Check Email Modal */}
       <CustomizedModal
         visible={isCheckEmailVisible}
         animationType="fade"
@@ -147,26 +322,31 @@ const SignUpPage = () => {
         </View>
       </CustomizedModal>
 
-      {/* Verification Code Modal */}
       <CustomizedModal
         visible={isVerificationCodeVisible}
         animationType="fade"
         transparent={true}
-        onRequestClose={handleVerificationCodeClose}
+        onRequestClose={handleVerificationCodeSubmit}
       >
         <View style={styles.modalContent}>
           <View style={styles.modalContentChild}>
             <Text style={styles.titleModal}>Type the code:</Text>
             <View style={styles.codeInputContainer}>
-              <TextInput
-                style={styles.codeInput}
-                maxLength={6}
-                value={code}
-                onChangeText={setCode}
-                keyboardType="numeric"
-                placeholder="- - - - - -"
-                placeholderTextColor="#999"
-              />
+              {[...Array(6)].map((_, index) => (
+                <TextInput
+                  key={index}
+                  ref={nextInputRef[index]}
+                  style={styles.codeInput}
+                  maxLength={1}
+                  value={code[index] || ""}
+                  onChangeText={(text) => handleCodeChange(text, index)}
+                  onKeyPress={({ nativeEvent }) =>
+                    handleKeyPress(nativeEvent, index)
+                  }
+                  placeholder=""
+                  placeholderTextColor="#999"
+                />
+              ))}
             </View>
             <Text style={styles.helperText}>
               I don’t have receive a code?{" "}
@@ -178,7 +358,7 @@ const SignUpPage = () => {
           </View>
           <TouchableOpacity
             style={styles.buttonModal}
-            onPress={handleVerificationCodeClose}
+            onPress={handleVerificationCodeSubmit}
           >
             <Text style={styles.buttonText}>DONE</Text>
           </TouchableOpacity>
@@ -193,7 +373,7 @@ const SignUpPage = () => {
         <View style={styles.modalContent}>
           <View style={styles.modalContentChild}>
             <Image
-              source={require("../../assets/images/logo.png")} // Replace with your logo image path
+              source={require("../../assets/images/logo.png")}
               style={styles.logo}
             />
             <Text
@@ -253,7 +433,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    marginBottom: 17,
+    marginBottom: 0,
   },
   button: {
     borderRadius: 8,
@@ -303,16 +483,16 @@ const styles = StyleSheet.create({
   },
   codeInputContainer: {
     marginVertical: 15,
-    width: "100%",
     alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
   },
   codeInput: {
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    width: "80%",
-    textAlign: "center",
-    color: "#000",
+    width: "15%",
+    backgroundColor: "white",
   },
   helperText: {
     fontSize: 14,
@@ -327,6 +507,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#000",
     marginTop: 5,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 
