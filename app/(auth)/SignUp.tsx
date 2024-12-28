@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useToast } from "react-native-toast-notifications";
 import { useRouter } from "expo-router";
@@ -131,6 +131,10 @@ const SignUpPage = () => {
   };
 
   const handleVerificationCodeSubmit = () => {
+    if (code === "") {
+      Alert.alert("Please input your verification code");
+      return;
+    }
     const singleStringCode = code.join("");
     verifyMutate({ email: data.email, verificationCode: singleStringCode });
   };

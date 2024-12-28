@@ -10,3 +10,8 @@ export interface VerifyUserTypes {
   email: string;
   verificationCode: string;
 }
+
+export interface LoginUserTypes {
+  email: string;
+  password: string;
+}

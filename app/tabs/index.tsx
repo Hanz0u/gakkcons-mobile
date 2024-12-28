@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import {
   Text,
