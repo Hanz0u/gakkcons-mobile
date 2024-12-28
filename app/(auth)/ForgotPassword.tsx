@@ -1,20 +1,82 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { useToast } from "react-native-toast-notifications";
+import { TouchableOpacity } from "react-native";
+
 import { Viewport } from "@/styles/styles";
 import CustomizedModal from "@/components/CustomizedModal";
-import { TouchableOpacity } from "react-native";
+import { useForgotPassword, useVerifyUser } from "@/api/auth/auth.hooks";
+import CodeInput from "@/components/CodeInput";
 
 const ForgotPassword = () => {
   const router = useRouter();
-
+  const toast = useToast();
   const [email, setEmail] = useState("");
-
   const [isCheckEmailVisible, setIsCheckEmailVisible] = useState(false);
   const [isVerificationCodeVisible, setIsVerificationCodeVisible] =
     useState(false);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState<any>("");
+
+  const {
+    mutate: forgotMutate,
+    isSuccess: isForgotSuccess,
+    isPending: isForgotPending,
+    isError: isForgotError,
+    error: forgotErrors,
+  } = useForgotPassword();
+
+  const {
+    mutate: verifyMutate,
+    isSuccess: isVerifySucess,
+    isPending: isVerifyPending,
+    isError: isVerifyError,
+    error: verifyErrors,
+  } = useVerifyUser();
+
+  const handleSubmit = () => {
+    forgotMutate({ email: email });
+  };
+
+  useEffect(() => {
+    let id: any;
+
+    if (isForgotPending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
+
+      if (isForgotSuccess) {
+        setIsCheckEmailVisible(true);
+      }
+
+      if (isForgotError) {
+        toast.show(forgotErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [isForgotPending, isForgotSuccess, isForgotError, forgotErrors]);
 
   const handleCheckEmailClose = () => {
     setIsCheckEmailVisible(false);
@@ -22,13 +84,61 @@ const ForgotPassword = () => {
   };
 
   const handleVerificationCodeClose = () => {
-    setIsVerificationCodeVisible(false);
-    router.push("/(auth)/NewPassword");
+    if (code === "") {
+      Alert.alert("Please input your verification code");
+      return;
+    }
+    const singleStringCode = code.join("");
+    verifyMutate({
+      email: email,
+      verificationCode: singleStringCode,
+      codeType: "reset_password",
+    });
   };
 
-  const handleSubmit = () => {
-    setIsCheckEmailVisible(true);
-  };
+  useEffect(() => {
+    let id: any;
+
+    if (isVerifyPending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
+
+      if (isVerifySucess) {
+        setIsVerificationCodeVisible(false);
+        router.push({
+          pathname: "/(auth)/NewPassword",
+          params: { email: email },
+        });
+      }
+
+      if (isVerifyError) {
+        setIsVerificationCodeVisible(true);
+        toast.show(verifyErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [isVerifyPending, isVerifySucess, isVerifyError, verifyErrors]);
 
   return (
     <>
@@ -62,7 +172,7 @@ const ForgotPassword = () => {
           SUBMIT
         </Button>
       </View>
-      {/* Check Email Modal */}
+
       <CustomizedModal
         visible={isCheckEmailVisible}
         animationType="fade"
@@ -85,7 +195,6 @@ const ForgotPassword = () => {
         </View>
       </CustomizedModal>
 
-      {/* Verification Code Modal */}
       <CustomizedModal
         visible={isVerificationCodeVisible}
         animationType="fade"
@@ -95,17 +204,7 @@ const ForgotPassword = () => {
         <View style={styles.modalContent}>
           <View style={styles.modalContentChild}>
             <Text style={styles.titleModal}>Type the code:</Text>
-            <View style={styles.codeInputContainer}>
-              <TextInput
-                style={styles.codeInput}
-                maxLength={6}
-                value={code}
-                onChangeText={setCode}
-                keyboardType="numeric"
-                placeholder="- - - - - -"
-                placeholderTextColor="#999"
-              />
-            </View>
+            <CodeInput codeState={[code, setCode]} />
             <Text style={styles.helperText}>
               I don’t have receive a code?{" "}
               <Text style={styles.retryText}>retry</Text>

@@ -8,6 +8,7 @@ import CustomizedModal from "@/components/CustomizedModal";
 import { TouchableOpacity } from "react-native";
 import { useSignupUser, useVerifyUser } from "@/api/auth/auth.hooks";
 import { validateInputs } from "@/utils/validations";
+import CodeInput from "@/components/CodeInput";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -104,39 +105,17 @@ const SignUpPage = () => {
     };
   }, [isSignupPending, isSignupSucess, isSignupError, signUpErrors]);
 
-  const nextInputRef: any = Array(6)
-    .fill(null)
-    .map(() => React.createRef());
-
-  const handleCodeChange = (text: any, index: any) => {
-    const newCode: any = [...code];
-    newCode[index] = text;
-    setCode(newCode);
-
-    if (text && index < 5) {
-      nextInputRef[index + 1]?.current?.focus();
-    }
-  };
-
-  const handleKeyPress = (nativeEvent: any, index: any) => {
-    if (nativeEvent.key === "Backspace") {
-      const newCode: any = [...code];
-      newCode[index] = "";
-      setCode(newCode);
-
-      if (index > 0) {
-        nextInputRef[index - 1]?.current?.focus();
-      }
-    }
-  };
-
   const handleVerificationCodeSubmit = () => {
     if (code === "") {
       Alert.alert("Please input your verification code");
       return;
     }
     const singleStringCode = code.join("");
-    verifyMutate({ email: data.email, verificationCode: singleStringCode });
+    verifyMutate({
+      email: data.email,
+      verificationCode: singleStringCode,
+      codeType: "signup_verify_user",
+    });
   };
 
   useEffect(() => {
@@ -335,23 +314,7 @@ const SignUpPage = () => {
         <View style={styles.modalContent}>
           <View style={styles.modalContentChild}>
             <Text style={styles.titleModal}>Type the code:</Text>
-            <View style={styles.codeInputContainer}>
-              {[...Array(6)].map((_, index) => (
-                <TextInput
-                  key={index}
-                  ref={nextInputRef[index]}
-                  style={styles.codeInput}
-                  maxLength={1}
-                  value={code[index] || ""}
-                  onChangeText={(text) => handleCodeChange(text, index)}
-                  onKeyPress={({ nativeEvent }) =>
-                    handleKeyPress(nativeEvent, index)
-                  }
-                  placeholder=""
-                  placeholderTextColor="#999"
-                />
-              ))}
-            </View>
+            <CodeInput codeState={[code, setCode]} />
             <Text style={styles.helperText}>
               I don’t have receive a code?{" "}
               <Text style={styles.retryText}>retry</Text>

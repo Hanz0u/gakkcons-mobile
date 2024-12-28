@@ -14,6 +14,7 @@ import { useToast } from "react-native-toast-notifications";
 import { Viewport } from "@/styles/styles";
 import { useLoginUser, useVerifyUser } from "@/api/auth/auth.hooks";
 import CustomizedModal from "@/components/CustomizedModal";
+import CodeInput from "@/components/CodeInput";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -46,39 +47,17 @@ const LoginPage = () => {
     loginMutate({ email: email, password: password });
   };
 
-  const nextInputRef: any = Array(6)
-    .fill(null)
-    .map(() => React.createRef());
-
-  const handleCodeChange = (text: any, index: any) => {
-    const newCode: any = [...code];
-    newCode[index] = text;
-    setCode(newCode);
-
-    if (text && index < 5) {
-      nextInputRef[index + 1]?.current?.focus();
-    }
-  };
-
-  const handleKeyPress = (nativeEvent: any, index: any) => {
-    if (nativeEvent.key === "Backspace") {
-      const newCode: any = [...code];
-      newCode[index] = "";
-      setCode(newCode);
-
-      if (index > 0) {
-        nextInputRef[index - 1]?.current?.focus();
-      }
-    }
-  };
-
   const handleVerificationCodeSubmit = () => {
     if (code === "") {
       Alert.alert("Please input your verification code");
       return;
     }
     const singleStringCode = code.join("");
-    verifyMutate({ email: email, verificationCode: singleStringCode });
+    verifyMutate({
+      email: email,
+      verificationCode: singleStringCode,
+      codeType: "signup_verify_user",
+    });
   };
 
   useEffect(() => {
@@ -241,23 +220,7 @@ const LoginPage = () => {
               It looks like your account hasn't been verified yet. Please check
               your email for the verification code and enter it here:
             </Text>
-            <View style={styles.codeInputContainer}>
-              {[...Array(6)].map((_, index) => (
-                <TextInput
-                  key={index}
-                  ref={nextInputRef[index]}
-                  style={styles.codeInput}
-                  maxLength={1}
-                  value={code[index] || ""}
-                  onChangeText={(text) => handleCodeChange(text, index)}
-                  onKeyPress={({ nativeEvent }) =>
-                    handleKeyPress(nativeEvent, index)
-                  }
-                  placeholder=""
-                  placeholderTextColor="#999"
-                />
-              ))}
-            </View>
+            <CodeInput codeState={[code, setCode]} />
             <Text style={styles.helperText}>
               I don't have receive a code?{" "}
               <Text style={styles.retryText}>retry</Text>
@@ -335,7 +298,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textDecorationLine: "underline",
   },
-  // Added new styles for verification code modal
+
   modalContent: {
     backgroundColor: "#ECE1DC",
     padding: 30,
@@ -354,19 +317,6 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "bold",
     marginBottom: 10,
-  },
-  codeInputContainer: {
-    marginVertical: 15,
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 10,
-  },
-  codeInput: {
-    fontSize: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: "#000",
-    width: "15%",
-    backgroundColor: "white",
   },
   helperText: {
     fontSize: 14,

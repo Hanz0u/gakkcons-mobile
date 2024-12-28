@@ -1,7 +1,13 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { LoginUserTypes, SignupUserTypes, VerifyUserTypes } from "./auth.types";
+import {
+  ForgotPasswordTypes,
+  LoginUserTypes,
+  ResetPasswordTypes,
+  SignupUserTypes,
+  VerifyUserTypes,
+} from "./auth.types";
 
 const backendURL = "http://192.168.1.16:5000";
 
@@ -46,6 +52,26 @@ export async function loginUser(data: LoginUserTypes) {
     const token = response.data.token;
     await setToken(token);
 
+    return [true, response.data];
+  } catch (error: any) {
+    const errorMessage = error.response.data.message;
+    return [false, errorMessage];
+  }
+}
+
+export async function forgotPassword(data: ForgotPasswordTypes) {
+  try {
+    const response = await instance.post("/api/users/password/forgot", data);
+    return [true, response.data];
+  } catch (error: any) {
+    const errorMessage = error.response.data.message;
+    return [false, errorMessage];
+  }
+}
+
+export async function resetPassword(data: ResetPasswordTypes) {
+  try {
+    const response = await instance.post("/api/users/password/reset", data);
     return [true, response.data];
   } catch (error: any) {
     const errorMessage = error.response.data.message;

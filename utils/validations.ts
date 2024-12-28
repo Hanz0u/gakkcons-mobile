@@ -29,3 +29,23 @@ export const validateInputs = (data: any, confirmPassword: string) => {
 
   return errors;
 };
+
+export const validatePasswordInputs = (
+  password: string,
+  confirmPassword: string
+) => {
+  const errors: any = {};
+  if (!password.trim()) {
+    errors.password = "Password is required.";
+  } else if (password.length < 6) {
+    errors.password = "Password must be at least 6 characters long.";
+  }
+
+  if (!confirmPassword.trim()) {
+    errors.confirmPassword = "Confirm password is required.";
+  } else if (password !== confirmPassword) {
+    errors.confirmPassword = "Passwords do not match.";
+  }
+
+  return errors;
+};
