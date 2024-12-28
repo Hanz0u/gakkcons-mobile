@@ -53,7 +53,11 @@ const LoginPage = () => {
       return;
     }
     const singleStringCode = code.join("");
-    verifyMutate({ email: email, verificationCode: singleStringCode });
+    verifyMutate({
+      email: email,
+      verificationCode: singleStringCode,
+      codeType: "signup_verify_user",
+    });
   };
 
   useEffect(() => {

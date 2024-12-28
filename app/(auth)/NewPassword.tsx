@@ -1,28 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { Viewport } from "@/styles/styles";
-import CustomizedModal from "@/components/CustomizedModal";
-import { TouchableOpacity } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { validatePasswordInputs } from "@/utils/validations";
+import { useResetPassword } from "@/api/auth/auth.hooks";
+import { useToast } from "react-native-toast-notifications";
 
 const NewPassword = () => {
   const router = useRouter();
+  const toast = useToast();
+  const searchParams = useLocalSearchParams();
+  const { email } = searchParams;
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resetValidationErrors, setResetValidationErrors] = useState<any>({});
 
-  const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
+  const {
+    mutate: resetMutate,
+    isSuccess: isResetSuccess,
+    isPending: isResetPending,
+    isError: isResetError,
+    error: resetErrors,
+  } = useResetPassword();
 
-  const handleWelcomeModalClose = () => {
-    setIsWelcomeModalVisible(false);
-    router.push("/(auth)/");
+  const handleSubmit = () => {
+    const validationErrors = validatePasswordInputs(password, confirmPassword);
+    if (Object.keys(validationErrors).length > 0) {
+      setResetValidationErrors(validationErrors);
+      return;
+    }
+    resetMutate({ email: String(email), newPassword: password });
   };
+  useEffect(() => {
+    let id: any;
 
-  const handleSubmit = () => {};
+    if (isResetPending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
 
+      if (isResetSuccess) {
+        toast.show("Password reset successfully!", {
+          type: "success",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+        setTimeout(() => {
+          router.push("/(auth)");
+        }, 4000);
+      }
+
+      if (isResetError) {
+        toast.show(resetErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [isResetPending, isResetSuccess, isResetError, resetErrors]);
   return (
     <>
       <View style={styles.container}>
@@ -51,6 +110,9 @@ const NewPassword = () => {
             />
           }
         />
+        {resetValidationErrors.password && (
+          <Text style={styles.errorText}>{resetValidationErrors.password}</Text>
+        )}
         <TextInput
           label="Confirm Password"
           value={confirmPassword}
@@ -67,8 +129,12 @@ const NewPassword = () => {
             />
           }
         />
+        {resetValidationErrors.confirmPassword && (
+          <Text style={styles.errorText}>
+            {resetValidationErrors.confirmPassword}
+          </Text>
+        )}
 
-        {/* Next Button */}
         <Button
           mode="contained"
           onPress={() => handleSubmit()}
@@ -78,42 +144,6 @@ const NewPassword = () => {
           SUBMIT
         </Button>
       </View>
-      {/* Check Email Modal */}
-
-      <CustomizedModal
-        visible={isWelcomeModalVisible}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={handleWelcomeModalClose}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalContentChild}>
-            <Image
-              source={require("../../assets/images/logo.png")} // Replace with your logo image path
-              style={styles.logo}
-            />
-            <Text
-              style={{
-                fontSize: 22,
-                color: "#000",
-                fontWeight: "bold",
-                marginBottom: 10,
-              }}
-            >
-              Welcome to Gakkcons!!!
-            </Text>
-            <Text style={styles.text}>
-              Please proceed to the log in to start
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={styles.buttonModal}
-            onPress={handleWelcomeModalClose}
-          >
-            <Text style={styles.buttonText}>OK</Text>
-          </TouchableOpacity>
-        </View>
-      </CustomizedModal>
     </>
   );
 };
@@ -149,7 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    marginBottom: 17,
+    marginBottom: 0,
   },
   button: {
     borderRadius: 8,
@@ -223,6 +253,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#000",
     marginTop: 5,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 

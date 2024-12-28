@@ -111,7 +111,11 @@ const SignUpPage = () => {
       return;
     }
     const singleStringCode = code.join("");
-    verifyMutate({ email: data.email, verificationCode: singleStringCode });
+    verifyMutate({
+      email: data.email,
+      verificationCode: singleStringCode,
+      codeType: "signup_verify_user",
+    });
   };
 
   useEffect(() => {
