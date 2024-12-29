@@ -49,3 +49,18 @@ export const validatePasswordInputs = (
 
   return errors;
 };
+
+export const validateRequestAppointmentInputs = (
+  selectedMode: string,
+  reason: string
+) => {
+  const errors: any = {};
+  if (!selectedMode.trim()) {
+    errors.selectedMode = "Please select mode.";
+  }
+
+  if (!reason.trim()) {
+    errors.reason = "Reason is required.";
+  }
+  return errors;
+};
