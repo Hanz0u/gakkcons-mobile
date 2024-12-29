@@ -1,11 +1,116 @@
+import React, { useState, useEffect } from "react";
+import { useRouter } from "expo-router";
+import { useToast } from "react-native-toast-notifications";
+
 import EditProfile from "@/components/EditProfile";
 import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { Text, View, Image, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useGetProfileInfo, useUpdateProfileInfo } from "@/api/user/user.hooks";
+import { validateUpdatePasswordInputs } from "@/utils/validations";
+import { removeToken } from "@/utils/token";
 
 export default function ProfileScreen() {
+  const router = useRouter();
+  const toast = useToast();
+  const { data: userInfo }: any = useGetProfileInfo();
+  const [updateUserValidationErrors, setUpdateUserValidationErrors] =
+    useState<any>({});
+
+  const user = React.useMemo(() => {
+    if (!userInfo) return [];
+    return userInfo[1] || [];
+  }, [userInfo]);
+
+  const [userData, setUserData] = useState({
+    firstName: user.first_name,
+    lastName: user.last_name,
+    email: user.email,
+    currentPassword: "",
+    newPassword: "",
+  });
   const [isEditPressed, setIsEditPressed] = useState<Boolean>(false);
+
+  const {
+    mutate: updateProfileMutate,
+    isSuccess: isUpdateProfileSuccess,
+    isPending: isUpdateProfilePending,
+    isError: isUpdateProfileError,
+    error: updateProfileErrors,
+  } = useUpdateProfileInfo();
+
+  const handleSubmit = () => {
+    const validationErrors = validateUpdatePasswordInputs(
+      userData.currentPassword,
+      userData.newPassword
+    );
+    if (Object.keys(validationErrors).length > 0) {
+      setUpdateUserValidationErrors(validationErrors);
+      return;
+    }
+    updateProfileMutate({
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      currentPassword: userData.currentPassword,
+      newPassword: userData.newPassword,
+    });
+  };
+
+  useEffect(() => {
+    let id: any;
+
+    if (isUpdateProfilePending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
+
+      if (isUpdateProfileSuccess) {
+        setUpdateUserValidationErrors([]);
+        setUserData((prevState: any) => ({
+          ...prevState,
+          currentPassword: "",
+          newPassword: "",
+        }));
+        toast.show("Profile updated successfully!", {
+          type: "success",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+
+      if (isUpdateProfileError) {
+        toast.show(updateProfileErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [
+    isUpdateProfilePending,
+    isUpdateProfileSuccess,
+    isUpdateProfileError,
+    updateProfileErrors,
+  ]);
 
   return (
     <>
@@ -24,8 +129,12 @@ export default function ProfileScreen() {
             source={require("@/assets/images/default-avatar.png")}
             style={{
               borderRadius: 100,
-              width: Viewport.width * 0.45,
-              height: Viewport.height * 0.23,
+              width: isEditPressed
+                ? Viewport.width * 0.3
+                : Viewport.width * 0.45,
+              height: isEditPressed
+                ? Viewport.height * 0.15
+                : Viewport.height * 0.23,
             }}
             resizeMode="contain"
           />
@@ -35,7 +144,7 @@ export default function ProfileScreen() {
             style={{
               position: "absolute",
               top: isEditPressed
-                ? Viewport.height * 0.18
+                ? Viewport.height * 0.1
                 : Viewport.height * 0.2,
               padding: isEditPressed ? 20 : 10,
               backgroundColor: "#9BA0A1",
@@ -62,7 +171,12 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
         {isEditPressed ? (
-          <EditProfile onSubmit={() => setIsEditPressed(false)} />
+          <EditProfile
+            userDataState={[userData, setUserData]}
+            validationErrors={updateUserValidationErrors}
+            onSubmit={handleSubmit}
+            onCancel={() => setIsEditPressed(false)}
+          />
         ) : (
           <>
             <Text
@@ -73,7 +187,7 @@ export default function ProfileScreen() {
                 color: "#282726",
               }}
             >
-              STUDENT
+              {user.first_name} {user.last_name}
             </Text>
             <View style={{ flexDirection: "row", gap: 20 }}>
               <Text
@@ -90,10 +204,14 @@ export default function ProfileScreen() {
                   color: "#282726",
                 }}
               >
-                student01@mail.com
+                {user.email}
               </Text>
             </View>
             <TouchableOpacity
+              onPress={() => {
+                removeToken();
+                router.push("/(auth)");
+              }}
               style={{
                 backgroundColor: Colors.error,
                 flexDirection: "row",
