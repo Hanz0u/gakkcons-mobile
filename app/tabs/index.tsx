@@ -12,174 +12,7 @@ import {
 } from "react-native";
 import { EvilIcons, Feather, Fontisto } from "@expo/vector-icons";
 import CustomizedModal from "@/components/CustomizedModal";
-
-const teacherStatus = [
-  {
-    id: 1,
-    isOnsite: false,
-    isOnline: true,
-    name: "Teacher A",
-    subject: "subject",
-    isActive: true,
-    schedule: [
-      {
-        date: "11-22-24",
-        time: "11:30 - 12:10",
-        type: "onsite",
-        status: "ongoing",
-      },
-      {
-        date: "11-22-24",
-        time: "9:30 - 11:00",
-        type: "online",
-        status: "finished",
-      },
-    ],
-  },
-  {
-    id: 2,
-    isOnsite: false,
-    isOnline: false,
-    name: "Teacher B",
-    subject: "subject",
-    isActive: false,
-    schedule: [
-      {
-        date: "11-23-24",
-        time: "10:00 - 10:45",
-        type: "onsite",
-        status: "cancelled",
-      },
-      {
-        date: "11-24-24",
-        time: "1:30 - 2:30",
-        type: "online",
-        status: "upcoming",
-      },
-    ],
-  },
-  {
-    id: 3,
-    isOnsite: false,
-    isOnline: false,
-    name: "Teacher C",
-    subject: "subject",
-    isActive: false,
-    schedule: [
-      {
-        date: "11-20-24",
-        time: "9:00 - 9:30",
-        type: "onsite",
-        status: "finished",
-      },
-      {
-        date: "11-21-24",
-        time: "10:00 - 11:00",
-        type: "online",
-        status: "finished",
-      },
-      {
-        date: "11-22-24",
-        time: "12:30 - 1:30",
-        type: "onsite",
-        status: "ongoing",
-      },
-      {
-        date: "11-23-24",
-        time: "2:00 - 3:00",
-        type: "online",
-        status: "upcoming",
-      },
-      {
-        date: "11-24-24",
-        time: "8:30 - 9:15",
-        type: "onsite",
-        status: "upcoming",
-      },
-      {
-        date: "11-25-24",
-        time: "10:00 - 11:30",
-        type: "online",
-        status: "upcoming",
-      },
-    ],
-  },
-  {
-    id: 4,
-    isOnsite: true,
-    isOnline: false,
-    name: "Teacher D",
-    subject: "subject",
-    isActive: true,
-    schedule: [
-      {
-        date: "11-26-24",
-        time: "8:00 - 9:00",
-        type: "onsite",
-        status: "upcoming",
-      },
-      {
-        date: "11-26-24",
-        time: "11:00 - 12:00",
-        type: "onsite",
-        status: "upcoming",
-      },
-    ],
-  },
-  {
-    id: 5,
-    isOnsite: true,
-    isOnline: true,
-    name: "Teacher D",
-    subject: "subject",
-    isActive: true,
-    schedule: [
-      {
-        date: "11-22-24",
-        time: "2:00 - 2:30",
-        type: "online",
-        status: "finished",
-      },
-      {
-        date: "11-22-24",
-        time: "3:00 - 4:00",
-        type: "onsite",
-        status: "ongoing",
-      },
-    ],
-  },
-  {
-    id: 6,
-    isOnsite: true,
-    isOnline: true,
-    name: "Teacher E",
-    subject: "subject",
-    isActive: true,
-    schedule: [
-      {
-        date: "11-22-24",
-        time: "8:00 - 8:30",
-        type: "onsite",
-        status: "finished",
-      },
-      {
-        date: "11-23-24",
-        time: "10:30 - 11:30",
-        type: "online",
-        status: "upcoming",
-      },
-    ],
-  },
-  {
-    id: 7,
-    isOnsite: false,
-    isOnline: false,
-    name: "Teacher F",
-    subject: "subject",
-    isActive: false,
-    schedule: [],
-  },
-];
+import { useGetTeachers } from "@/api/teacher/teacher.hooks";
 
 export default function ConsultationScreen() {
   const [isRequestTeacherOpen, setIsRequestTeacherOpen] =
@@ -189,7 +22,11 @@ export default function ConsultationScreen() {
   const [isProceedNotPressed, setIsProceedNotPressed] = useState<boolean>(true);
   const [isTeacherBusy, setIsTeacherBusy] = useState<boolean>(false);
 
+  const { data: teacherData, isSuccess: isGetTeacherSuccess }: any =
+    useGetTeachers();
+
   const handleRequestTeacherOpen = (item: any) => {
+    console.log("item", item);
     setSelectedTeacher(item);
     setIsRequestTeacherOpen(true);
   };
@@ -214,7 +51,7 @@ export default function ConsultationScreen() {
       }
     }
   };
-
+  console.log("teacherdata", teacherData[1]);
   return (
     <>
       <View
@@ -286,7 +123,7 @@ export default function ConsultationScreen() {
           <Feather name="filter" size={40} color="black" />
         </View>
         <FlatList
-          data={teacherStatus}
+          data={teacherData[1]}
           style={{
             height: Viewport.height * 0.65,
             width: Viewport.width * 0.9,
@@ -374,7 +211,7 @@ export default function ConsultationScreen() {
                     fontFamily: "Montserrat",
                   }}
                 >
-                  {item.subject} / position
+                  {item.subjects[0]}
                 </Text>
               </View>
               <View
@@ -440,7 +277,7 @@ export default function ConsultationScreen() {
                   fontFamily: "Montserrat",
                 }}
               >
-                {selectedTeacher.subject} / position
+                {selectedTeacher.subjects}
               </Text>
             </View>
             <View
@@ -589,10 +426,10 @@ export default function ConsultationScreen() {
                     paddingVertical: 20,
                   }}
                 >
-                  {selectedTeacher.schedule &&
-                    selectedTeacher.schedule.map((sched: any) => (
+                  {selectedTeacher.appointments &&
+                    selectedTeacher.appointments.map((appointment: any) => (
                       <View
-                        key={`${sched.date}-${sched.time}`}
+                        key={`${appointment.date}-${appointment.time}`}
                         style={{
                           width: Viewport.width * 0.7,
                           flexDirection: "row",
@@ -606,7 +443,7 @@ export default function ConsultationScreen() {
                             color: "black",
                           }}
                         >
-                          {sched.date}
+                          {appointment.date}
                         </Text>
                         <Text
                           style={{
@@ -615,7 +452,7 @@ export default function ConsultationScreen() {
                             color: "black",
                           }}
                         >
-                          {sched.time}
+                          {appointment.time}
                         </Text>
                         <Text
                           style={{
@@ -624,19 +461,19 @@ export default function ConsultationScreen() {
                             color: "black",
                           }}
                         >
-                          {sched.type}
+                          {appointment.type}
                         </Text>
                         <Text
                           style={{
                             fontSize: FontSizes.tiny,
                             fontFamily: "Montserrat",
                             color:
-                              sched.status === "ongoing"
+                              appointment.status === "ongoing"
                                 ? "#15B31B"
                                 : "#CD1616",
                           }}
                         >
-                          {sched.status}
+                          {appointment.status}
                         </Text>
                       </View>
                     ))}
