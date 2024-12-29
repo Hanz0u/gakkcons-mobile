@@ -64,3 +64,16 @@ export const validateRequestAppointmentInputs = (
   }
   return errors;
 };
+
+export const validateUpdatePasswordInputs = (
+  currentPassword: string,
+  newPassword: string
+) => {
+  const errors: any = {};
+  if (currentPassword && !newPassword.trim()) {
+    errors.newPassword = "New password is required.";
+  } else if (currentPassword && newPassword.length < 6) {
+    errors.newPassword = "New password must be at least 6 characters long.";
+  }
+  return errors;
+};

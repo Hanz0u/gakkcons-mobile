@@ -32,7 +32,7 @@ export default function ConsultationScreen() {
   const [appointmentValidationErrors, setAppointmentValidationErrors] =
     useState<any>({});
 
-  const { data: teacherData, isSuccess: isGetTeacherSuccess }: any =
+  const { data: teacherData, isSuccess: isGetTeacherSuccess } =
     useGetTeachers();
 
   const {
@@ -57,9 +57,19 @@ export default function ConsultationScreen() {
         setIsRequestTeacherOpen(false);
         setIsTeacherBusy(true);
       } else {
-        setIsProceedNotPressed(true);
-        setIsSuccess(true);
-        setIsRequestTeacherOpen(false);
+        const validationErrors = validateRequestAppointmentInputs(
+          selectedMode,
+          reason
+        );
+        if (Object.keys(validationErrors).length > 0) {
+          setAppointmentValidationErrors(validationErrors);
+          return;
+        }
+        requestMutate({
+          facultyId: selectedTeacher.user_id,
+          reason: reason,
+          mode: selectedMode,
+        });
       }
     } else {
       if (isProceedNotPressed) {
@@ -125,6 +135,11 @@ export default function ConsultationScreen() {
       }
     };
   }, [isRequestPending, isRequestSuccess, isRequestError, requestErrors]);
+
+  const teachers = React.useMemo(() => {
+    if (!teacherData || !Array.isArray(teacherData)) return [];
+    return Array.isArray(teacherData[1]) ? teacherData[1] : [];
+  }, [teacherData]);
 
   return (
     <>
@@ -197,14 +212,14 @@ export default function ConsultationScreen() {
           <Feather name="filter" size={40} color="black" />
         </View>
         <FlatList
-          data={teacherData[1]}
+          data={teachers}
           style={{
             height: Viewport.height * 0.65,
             width: Viewport.width * 0.9,
             alignSelf: "center",
             flexGrow: 0,
           }}
-          keyExtractor={(item: any) => item.id}
+          keyExtractor={(item) => `teacher-${item.user_id}`}
           contentContainerStyle={{
             backgroundColor: Colors.tertiaryBackground,
             paddingVertical: 15,

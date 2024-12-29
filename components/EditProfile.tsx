@@ -1,17 +1,23 @@
 import { FontSizes, Viewport } from "@/styles/styles";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { View, Text } from "react-native";
 import { TextInput, Button } from "react-native-paper";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 interface EditProfileType {
+  userDataState: [any, Dispatch<SetStateAction<any>>];
+  validationErrors: any;
   onSubmit: () => void;
+  onCancel: () => void;
 }
 
-const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
-  const [name, setName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+const EditProfile: React.FC<EditProfileType> = ({
+  userDataState,
+  validationErrors,
+  onSubmit,
+  onCancel,
+}) => {
+  const [userData, setUserData] = userDataState;
 
   return (
     <View
@@ -58,8 +64,13 @@ const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
 
           <TextInput
             label="First Name"
-            value={name}
-            onChangeText={setName}
+            value={userData.firstName}
+            onChangeText={(text) =>
+              setUserData((prevState: any) => ({
+                ...prevState,
+                firstName: text,
+              }))
+            }
             mode="outlined"
             outlineColor="#282726"
             theme={{ colors: { primary: "#282726" } }}
@@ -67,8 +78,13 @@ const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
           />
           <TextInput
             label="Last Name"
-            value={lastName}
-            onChangeText={setLastName}
+            value={userData.lastName}
+            onChangeText={(text) =>
+              setUserData((prevState: any) => ({
+                ...prevState,
+                lastName: text,
+              }))
+            }
             mode="outlined"
             outlineColor="#282726"
             theme={{ colors: { primary: "#282726" } }}
@@ -76,7 +92,6 @@ const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
           />
         </View>
 
-        {/* Email Section */}
         <View style={{ width: "90%", marginBottom: 15, alignSelf: "center" }}>
           <Text
             style={{
@@ -89,9 +104,15 @@ const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
             Email
           </Text>
           <TextInput
+            disabled
             label="email"
-            value={email}
-            onChangeText={setEmail}
+            value={userData.email}
+            onChangeText={(text) =>
+              setUserData((prevState: any) => ({
+                ...prevState,
+                email: text,
+              }))
+            }
             mode="outlined"
             outlineColor="#282726"
             theme={{ colors: { primary: "#282726" } }}
@@ -99,7 +120,6 @@ const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
           />
         </View>
 
-        {/* Password Section */}
         <View style={{ width: "90%", marginBottom: 15, alignSelf: "center" }}>
           <Text
             style={{
@@ -112,32 +132,78 @@ const EditProfile: React.FC<EditProfileType> = ({ onSubmit }) => {
             Password
           </Text>
           <TextInput
-            label="*******"
-            value={password}
-            onChangeText={setPassword}
+            label="current password"
+            value={userData.currentPassword}
+            secureTextEntry
+            onChangeText={(text) =>
+              setUserData((prevState: any) => ({
+                ...prevState,
+                currentPassword: text,
+              }))
+            }
             mode="outlined"
             outlineColor="#282726"
             theme={{ colors: { primary: "#282726" } }}
             style={{ backgroundColor: "transparent" }}
           />
+          <TextInput
+            label="new password"
+            value={userData.newPassword}
+            secureTextEntry
+            onChangeText={(text) =>
+              setUserData((prevState: any) => ({
+                ...prevState,
+                newPassword: text,
+              }))
+            }
+            mode="outlined"
+            outlineColor="#282726"
+            theme={{ colors: { primary: "#282726" } }}
+            style={{ backgroundColor: "transparent" }}
+          />
+          {validationErrors.newPassword && (
+            <Text style={{ color: "red", fontSize: 12 }}>
+              {validationErrors.newPassword}
+            </Text>
+          )}
         </View>
       </View>
-
-      {/* Submit Button */}
-      <Button
-        mode="contained"
-        onPress={onSubmit}
+      <View
         style={{
-          borderRadius: 8,
-          paddingHorizontal: 10,
-          width: Viewport.width * 0.3,
+          flexDirection: "row",
           alignSelf: "center",
-          marginTop: 10,
+          gap: 15,
         }}
-        buttonColor="#00C853"
       >
-        DONE
-      </Button>
+        <Button
+          mode="contained"
+          onPress={onCancel}
+          style={{
+            borderRadius: 8,
+            paddingHorizontal: 10,
+            width: Viewport.width * 0.3,
+            alignSelf: "center",
+            marginTop: 10,
+          }}
+          buttonColor="gray"
+        >
+          Cancel
+        </Button>
+        <Button
+          mode="contained"
+          onPress={onSubmit}
+          style={{
+            borderRadius: 8,
+            paddingHorizontal: 10,
+            width: Viewport.width * 0.3,
+            alignSelf: "center",
+            marginTop: 10,
+          }}
+          buttonColor="#00C853"
+        >
+          DONE
+        </Button>
+      </View>
     </View>
   );
 };
