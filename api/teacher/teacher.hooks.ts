@@ -7,7 +7,6 @@ export function useGetTeachers() {
     queryKey: ["teachers"],
     queryFn: async () => {
       const result = await getTeachers();
-      console.log("result", result);
       if (result[0] !== true) {
         return Promise.reject(new Error(result[1]));
       }

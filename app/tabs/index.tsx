@@ -26,7 +26,6 @@ export default function ConsultationScreen() {
     useGetTeachers();
 
   const handleRequestTeacherOpen = (item: any) => {
-    console.log("item", item);
     setSelectedTeacher(item);
     setIsRequestTeacherOpen(true);
   };
@@ -51,7 +50,6 @@ export default function ConsultationScreen() {
       }
     }
   };
-  console.log("teacherdata", teacherData[1]);
   return (
     <>
       <View
