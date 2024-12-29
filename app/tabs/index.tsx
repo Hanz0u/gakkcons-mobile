@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import {
   Text,
@@ -10,20 +10,38 @@ import {
   Image,
   ScrollView,
 } from "react-native";
+import { useToast } from "react-native-toast-notifications";
 import { EvilIcons, Feather, Fontisto } from "@expo/vector-icons";
 import CustomizedModal from "@/components/CustomizedModal";
-import { useGetTeachers } from "@/api/teacher/teacher.hooks";
+import {
+  useGetTeachers,
+  useRequestAppointment,
+} from "@/api/teacher/teacher.hooks";
+import { validateRequestAppointmentInputs } from "@/utils/validations";
 
 export default function ConsultationScreen() {
+  const toast = useToast();
   const [isRequestTeacherOpen, setIsRequestTeacherOpen] =
     useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [selectedTeacher, setSelectedTeacher] = useState<any>([]);
   const [isProceedNotPressed, setIsProceedNotPressed] = useState<boolean>(true);
   const [isTeacherBusy, setIsTeacherBusy] = useState<boolean>(false);
+  const [selectedMode, setSelectedMode] = useState("");
+  const [reason, setReason] = useState("");
+  const [appointmentValidationErrors, setAppointmentValidationErrors] =
+    useState<any>({});
 
   const { data: teacherData, isSuccess: isGetTeacherSuccess }: any =
     useGetTeachers();
+
+  const {
+    mutate: requestMutate,
+    isSuccess: isRequestSuccess,
+    isPending: isRequestPending,
+    isError: isRequestError,
+    error: requestErrors,
+  } = useRequestAppointment();
 
   const handleRequestTeacherOpen = (item: any) => {
     setSelectedTeacher(item);
@@ -31,7 +49,10 @@ export default function ConsultationScreen() {
   };
 
   const handleProceed = () => {
-    if (selectedTeacher.schedule && selectedTeacher.schedule.length > 4) {
+    if (
+      selectedTeacher.appointments &&
+      selectedTeacher.appointments.length > 4
+    ) {
       if (isProceedNotPressed) {
         setIsRequestTeacherOpen(false);
         setIsTeacherBusy(true);
@@ -44,12 +65,67 @@ export default function ConsultationScreen() {
       if (isProceedNotPressed) {
         setIsProceedNotPressed(false);
       } else {
-        setIsProceedNotPressed(true);
-        setIsSuccess(true);
-        setIsRequestTeacherOpen(false);
+        const validationErrors = validateRequestAppointmentInputs(
+          selectedMode,
+          reason
+        );
+        if (Object.keys(validationErrors).length > 0) {
+          setAppointmentValidationErrors(validationErrors);
+          return;
+        }
+        requestMutate({
+          facultyId: selectedTeacher.user_id,
+          reason: reason,
+          mode: selectedMode,
+        });
       }
     }
   };
+
+  useEffect(() => {
+    let id: any;
+
+    if (isRequestPending) {
+      if (!id) {
+        id = toast.show("Please wait. Loading...", {
+          type: "normal",
+          placement: "top",
+          animationType: "slide-in",
+          normalColor: "gray",
+        });
+      }
+    } else {
+      if (id) {
+        toast.hide(id);
+        id = null;
+      }
+
+      if (isRequestSuccess) {
+        setIsProceedNotPressed(true);
+        setIsSuccess(true);
+        setIsRequestTeacherOpen(false);
+        setSelectedMode("");
+        setAppointmentValidationErrors([]);
+        setReason("");
+      }
+
+      if (isRequestError) {
+        toast.show(requestErrors?.message, {
+          type: "danger",
+          placement: "top",
+          duration: 4000,
+          animationType: "slide-in",
+        });
+      }
+    }
+
+    return () => {
+      if (id) {
+        toast.hide(id);
+      }
+    };
+  }, [isRequestPending, isRequestSuccess, isRequestError, requestErrors]);
+
   return (
     <>
       <View
@@ -233,13 +309,16 @@ export default function ConsultationScreen() {
         transparent={true}
         onRequestClose={() => {
           setIsRequestTeacherOpen(false), setIsProceedNotPressed(true);
+          setSelectedMode("");
+          setAppointmentValidationErrors([]);
+          setReason("");
         }}
       >
         <View
           style={{
             backgroundColor: Colors.primaryBackground,
             width: Viewport.width * 0.9,
-            height: Viewport.height * 0.63,
+            height: "auto",
             borderRadius: 10,
             padding: 20,
             gap: 15,
@@ -278,50 +357,75 @@ export default function ConsultationScreen() {
                 {selectedTeacher.subjects}
               </Text>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 5,
-                height: Viewport.height * 0.025,
-                alignSelf: "flex-start",
-              }}
-            >
-              <Text
+            <View style={{ flexDirection: "column" }}>
+              <View
                 style={{
-                  fontSize: Viewport.width * 0.02,
-                  fontFamily: "Montserrat",
-                  backgroundColor: selectedTeacher.isOnsite
-                    ? Colors.activeAccent
-                    : Colors.secondaryText,
-                  color: selectedTeacher.isOnsite
-                    ? Colors.secondaryBackground
-                    : "black",
-                  fontWeight: "500",
-                  padding: 4,
-                  borderTopLeftRadius: 5,
-                  borderBottomLeftRadius: 5,
+                  flexDirection: "row",
+                  gap: 5,
+                  height: Viewport.height * 0.025,
+                  alignSelf: "flex-start",
                 }}
               >
-                ONSITE
-              </Text>
-              <Text
-                style={{
-                  fontSize: Viewport.width * 0.02,
-                  fontFamily: "Montserrat",
-                  backgroundColor: selectedTeacher.isOnline
-                    ? Colors.activeAccent
-                    : Colors.secondaryText,
-                  color: selectedTeacher.isOnline
-                    ? Colors.secondaryBackground
-                    : "black",
-                  fontWeight: "500",
-                  padding: 4,
-                  borderTopRightRadius: 5,
-                  borderBottomRightRadius: 5,
-                }}
-              >
-                ONLINE
-              </Text>
+                <TouchableOpacity
+                  onPress={() => setSelectedMode("onsite")}
+                  style={{
+                    backgroundColor:
+                      selectedMode === "onsite"
+                        ? Colors.activeAccent
+                        : Colors.secondaryText,
+
+                    padding: 4,
+                    borderTopLeftRadius: 5,
+                    borderBottomLeftRadius: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: Viewport.width * 0.02,
+                      fontFamily: "Montserrat",
+                      color:
+                        selectedMode === "onsite"
+                          ? Colors.secondaryBackground
+                          : "black",
+                      fontWeight: "500",
+                    }}
+                  >
+                    ONSITE
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setSelectedMode("online")}
+                  style={{
+                    backgroundColor:
+                      selectedMode === "online"
+                        ? Colors.activeAccent
+                        : Colors.secondaryText,
+
+                    padding: 4,
+                    borderTopRightRadius: 5,
+                    borderBottomRightRadius: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: Viewport.width * 0.02,
+                      fontFamily: "Montserrat",
+                      color:
+                        selectedMode === "online"
+                          ? Colors.secondaryBackground
+                          : "black",
+                      fontWeight: "500",
+                    }}
+                  >
+                    ONLINE
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {appointmentValidationErrors.selectedMode && (
+                <Text style={{ color: "red", fontSize: 12 }}>
+                  {appointmentValidationErrors.selectedMode}
+                </Text>
+              )}
             </View>
           </View>
           {isProceedNotPressed ? (
@@ -425,74 +529,85 @@ export default function ConsultationScreen() {
                   }}
                 >
                   {selectedTeacher.appointments &&
-                    selectedTeacher.appointments.map((appointment: any) => (
-                      <View
-                        key={`${appointment.date}-${appointment.time}`}
-                        style={{
-                          width: Viewport.width * 0.7,
-                          flexDirection: "row",
-                          justifyContent: "space-around",
-                        }}
-                      >
-                        <Text
+                    selectedTeacher.appointments.map(
+                      (appointment: any, index: any) => (
+                        <View
+                          key={index}
                           style={{
-                            fontSize: FontSizes.tiny,
-                            fontFamily: "Montserrat",
-                            color: "black",
+                            width: Viewport.width * 0.7,
+                            flexDirection: "row",
+                            justifyContent: "space-around",
                           }}
                         >
-                          {appointment.date}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: FontSizes.tiny,
-                            fontFamily: "Montserrat",
-                            color: "black",
-                          }}
-                        >
-                          {appointment.time}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: FontSizes.tiny,
-                            fontFamily: "Montserrat",
-                            color: "black",
-                          }}
-                        >
-                          {appointment.type}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: FontSizes.tiny,
-                            fontFamily: "Montserrat",
-                            color:
-                              appointment.status === "ongoing"
-                                ? "#15B31B"
-                                : "#CD1616",
-                          }}
-                        >
-                          {appointment.status}
-                        </Text>
-                      </View>
-                    ))}
+                          <Text
+                            style={{
+                              fontSize: FontSizes.tiny,
+                              fontFamily: "Montserrat",
+                              color: "black",
+                            }}
+                          >
+                            {appointment.date ? appointment.date : "tbd"}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: FontSizes.tiny,
+                              fontFamily: "Montserrat",
+                              color: "black",
+                            }}
+                          >
+                            {appointment.time ? appointment.time : "tbd"}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: FontSizes.tiny,
+                              fontFamily: "Montserrat",
+                              color: "black",
+                            }}
+                          >
+                            {appointment.mode}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: FontSizes.tiny,
+                              fontFamily: "Montserrat",
+                              color:
+                                appointment.status === "ongoing"
+                                  ? "#15B31B"
+                                  : "#CD1616",
+                            }}
+                          >
+                            {appointment.status}
+                          </Text>
+                        </View>
+                      )
+                    )}
                 </ScrollView>
               </View>
             </View>
           ) : (
-            <TextInput
-              placeholder="reason..."
-              style={{
-                backgroundColor: "white",
-                color: "black",
-                borderRadius: 10,
-                width: Viewport.width * 0.8,
-                height: Viewport.height * 0.4,
-                fontSize: FontSizes.small,
-                padding: 20,
-                textAlignVertical: "top",
-              }}
-              multiline={true}
-            />
+            <>
+              <TextInput
+                value={reason}
+                onChangeText={(text) => setReason(text)}
+                placeholder="reason..."
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  borderRadius: 10,
+                  width: Viewport.width * 0.8,
+                  height: Viewport.height * 0.4,
+                  fontSize: FontSizes.small,
+                  padding: 20,
+                  textAlignVertical: "top",
+                }}
+                multiline={true}
+              />
+              {appointmentValidationErrors.reason && (
+                <Text style={{ color: "red", fontSize: 12 }}>
+                  {appointmentValidationErrors.reason}
+                </Text>
+              )}
+            </>
           )}
 
           <TouchableOpacity
