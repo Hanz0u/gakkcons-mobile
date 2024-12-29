@@ -1,6 +1,3 @@
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import {
   ForgotPasswordTypes,
   LoginUserTypes,
@@ -8,22 +5,8 @@ import {
   SignupUserTypes,
   VerifyUserTypes,
 } from "./auth.types";
-
-const backendURL = "http://192.168.1.16:5000";
-
-const instance = axios.create({
-  baseURL: backendURL,
-});
-
-export async function getToken() {
-  const token = await AsyncStorage.getItem("token");
-  return token;
-}
-
-export async function setToken(token: string) {
-  await AsyncStorage.setItem("token", token);
-  return true;
-}
+import { instance } from "../instance";
+import { setToken } from "@/utils/token";
 
 export async function signupUser(data: SignupUserTypes) {
   try {
