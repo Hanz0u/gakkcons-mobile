@@ -79,6 +79,11 @@ const LoginPage = () => {
       }
 
       if (isLoginSucess) {
+        id = toast.show("Sucessfully logged in.", {
+          type: "success",
+          placement: "top",
+          animationType: "slide-in",
+        });
         router.push("/tabs");
       }
 
