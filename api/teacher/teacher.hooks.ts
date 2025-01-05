@@ -3,16 +3,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTeachers, requestAppointment } from "./teacher.requests";
 import { RequestAppointmentTypes } from "./teacher.types";
 
-export function useGetTeachers() {
+export function useGetTeachers(search: string = "") {
   return useQuery({
-    queryKey: ["teachers"],
+    queryKey: ["teachers", search],
     queryFn: async () => {
-      const result = await getTeachers();
+      const result = await getTeachers(search);
       if (result[0] !== true) {
         return Promise.reject(new Error(result[1]));
       }
       return result;
     },
+    enabled: !!search || search === "",
   });
 }
 

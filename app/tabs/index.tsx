@@ -31,9 +31,10 @@ export default function ConsultationScreen() {
   const [reason, setReason] = useState("");
   const [appointmentValidationErrors, setAppointmentValidationErrors] =
     useState<any>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: teacherData, isSuccess: isGetTeacherSuccess } =
-    useGetTeachers();
+  const { data: teacherData, isLoading: isGetTeacherLoading } =
+    useGetTeachers(searchQuery);
 
   const {
     mutate: requestMutate,
@@ -185,6 +186,8 @@ export default function ConsultationScreen() {
             }}
           >
             <TextInput
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
               placeholder="search"
               placeholderTextColor={Colors.secondaryBackground}
               style={{
@@ -220,6 +223,13 @@ export default function ConsultationScreen() {
             flexGrow: 0,
           }}
           keyExtractor={(item) => `teacher-${item.user_id}`}
+          ListEmptyComponent={() => (
+            <View style={{ padding: 20, alignItems: "center" }}>
+              <Text style={{ color: "white" }}>
+                {isGetTeacherLoading ? "Loading..." : "No teachers found"}
+              </Text>
+            </View>
+          )}
           contentContainerStyle={{
             backgroundColor: Colors.tertiaryBackground,
             paddingVertical: 15,

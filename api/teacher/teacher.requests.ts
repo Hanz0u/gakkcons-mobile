@@ -1,13 +1,16 @@
 import { instance, AuthHeader } from "../instance";
 import { RequestAppointmentTypes } from "./teacher.types";
 
-export async function getTeachers() {
+export async function getTeachers(search: string = "") {
   try {
     const authHeader = await AuthHeader();
-    const response = await instance.get("/api/teachers", authHeader);
+    const response = await instance.get(
+      `/api/teachers?search=${encodeURIComponent(search)}`,
+      authHeader
+    );
     return [true, response.data];
   } catch (error: any) {
-    const errorMessage = error.response.data.message;
+    const errorMessage = error.response?.data?.message || "An error occurred.";
     return [false, errorMessage];
   }
 }
