@@ -2,7 +2,14 @@ import axios from "axios";
 
 import { getToken } from "@/utils/token";
 
-const backendURL = "http://192.168.1.16:5000";
+export let backendURL: any;
+if (process.env.EXPO_PUBLIC_BACKEND_URL) {
+  backendURL = process.env.EXPO_PUBLIC_BACKEND_URL;
+} else {
+  throw new Error(
+    "EXPO_PUBLIC_BACKEND_URL is not defined in env file. Please add it and restart the server."
+  );
+}
 
 export const instance = axios.create({
   baseURL: backendURL,

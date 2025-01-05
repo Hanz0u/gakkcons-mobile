@@ -9,6 +9,7 @@ import { Text, View, Image, TouchableOpacity } from "react-native";
 import { useGetProfileInfo, useUpdateProfileInfo } from "@/api/user/user.hooks";
 import { validateUpdatePasswordInputs } from "@/utils/validations";
 import { removeToken } from "@/utils/token";
+import { socket } from "@/contexts/SocketContext";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -211,6 +212,7 @@ export default function ProfileScreen() {
               onPress={() => {
                 removeToken();
                 router.push("/(auth)");
+                socket.disconnect();
               }}
               style={{
                 backgroundColor: Colors.error,
