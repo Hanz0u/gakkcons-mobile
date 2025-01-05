@@ -2,7 +2,7 @@ import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import { ScrollView, Text, TouchableOpacity, View, Alert } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import CustomizedModal from "@/components/CustomizedModal";
-import { useState } from "react";
+import React, { useState } from "react";
 import * as Clipboard from "expo-clipboard";
 
 const notificationData = [
