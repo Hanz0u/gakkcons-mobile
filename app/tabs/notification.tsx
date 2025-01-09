@@ -2,31 +2,23 @@ import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import { ScrollView, Text, TouchableOpacity, View, Alert } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import CustomizedModal from "@/components/CustomizedModal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Clipboard from "expo-clipboard";
-
-const notificationData = [
-  {
-    teacherName: "Teacher A",
-    subject: "IT112 - Computer Programming 1",
-    message:
-      "Teacher A has accepted your consultation request. Venue: Onsite. Date: 12-07-24 at 10:00 am",
-    link: "",
-    date: "New",
-  },
-  {
-    teacherName: "Teacher B",
-    subject: "IT111 - Introduction to Computing",
-    message:
-      "Teacher B has accepted your consultation request. Venue: Online. Date: 12-08-24 at 03:00 pm",
-    link: "https://zoom.us/j/1234567890?pwd=example1",
-    date: "Yesterday",
-  },
-];
+import {
+  useGetNotifications,
+  useNotification,
+} from "@/api/notification/notification.hooks";
+import { useSocket } from "@/contexts/SocketContext";
 
 export default function NotificationScreen() {
+  const io = useSocket();
   const [isNotifPressed, setIsNotifPressed] = useState<boolean>(false);
   const [selectedNotification, setSelectedNotification] = useState<any>([]);
+  const {
+    data: notificationData,
+    isLoading: isGetNotificationLoading,
+    refetch,
+  } = useGetNotifications();
 
   const handleNotification = (notif: any) => {
     setSelectedNotification(notif);
@@ -40,6 +32,20 @@ export default function NotificationScreen() {
       Alert.alert("Error", "No link to copy.");
     }
   };
+  useNotification();
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  io.on("notification", () => {
+    refetch();
+  });
+
+  const notifications = React.useMemo(() => {
+    if (!notificationData || !Array.isArray(notificationData)) return [];
+    return Array.isArray(notificationData[1]) ? notificationData[1] : [];
+  }, [notificationData]);
   return (
     <>
       <View
@@ -79,10 +85,10 @@ export default function NotificationScreen() {
             paddingVertical: 20,
           }}
         >
-          {notificationData.map((notif) => (
+          {notifications.map((notif) => (
             <TouchableOpacity
               onPress={() => handleNotification(notif)}
-              key={notif.date}
+              key={notif.appointment_id}
               style={{
                 height: Viewport.height * 0.2,
                 width: Viewport.width * 1,
@@ -136,7 +142,7 @@ export default function NotificationScreen() {
                       fontSize: FontSizes.normal,
                     }}
                   >
-                    {notif.teacherName}
+                    {notif.faculty_name}
                   </Text>
 
                   <Text
@@ -148,7 +154,8 @@ export default function NotificationScreen() {
                     numberOfLines={4}
                     ellipsizeMode="tail"
                   >
-                    {notif.message}
+                    {notif.status === "Confirmed" &&
+                      `${notif.faculty_name} has accepted your consultation request. Venue: ${notif.mode}`}
                   </Text>
                 </View>
               </View>
@@ -208,7 +215,7 @@ export default function NotificationScreen() {
                   fontSize: FontSizes.normal,
                 }}
               >
-                {selectedNotification.teacherName}
+                {selectedNotification.faculty_name}
               </Text>
 
               <Text
@@ -240,10 +247,11 @@ export default function NotificationScreen() {
                 flexWrap: "wrap",
               }}
             >
-              {selectedNotification.message}
+              {selectedNotification.status === "Confirmed" &&
+                `${selectedNotification.faculty_name} has accepted your consultation request. Venue: ${selectedNotification.mode}`}
             </Text>
           </ScrollView>
-          {selectedNotification.link && (
+          {selectedNotification.meet_link && (
             <>
               <Text
                 style={{
@@ -272,9 +280,9 @@ export default function NotificationScreen() {
                     fontSize: FontSizes.small,
                   }}
                 >
-                  {selectedNotification.link.length > 28
-                    ? `${selectedNotification.link.substring(0, 28)}...`
-                    : selectedNotification.link}
+                  {selectedNotification.meet_link.length > 28
+                    ? `${selectedNotification.meet_link.substring(0, 28)}...`
+                    : selectedNotification.meet_link}
                 </Text>
                 <TouchableOpacity onPress={handleCopyToClipboard}>
                   <Ionicons name="copy-outline" size={24} color="black" />

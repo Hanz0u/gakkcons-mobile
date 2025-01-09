@@ -274,6 +274,7 @@ const SignUpPage = () => {
         )}
 
         <Button
+        disabled={isSignupPending}
           mode="contained"
           onPress={handleSignUp}
           style={styles.button}
