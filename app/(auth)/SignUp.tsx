@@ -17,6 +17,7 @@ const SignUpPage = () => {
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
+    id_number: "",
     email: "",
     password: "",
     userType: "student",
@@ -209,6 +210,25 @@ const SignUpPage = () => {
           </Text>
         )}
         <TextInput
+          label="School ID number"
+          value={data.id_number}
+          onChangeText={(text) =>
+            setData((prevState) => ({
+              ...prevState,
+              id_number: text,
+            }))
+          }
+          style={styles.input}
+          mode="outlined"
+          outlineColor="#282726"
+          theme={{ colors: { primary: "#282726" } }}
+        />
+        {signupValidationErrors.id_number && (
+          <Text style={styles.errorText}>
+            {signupValidationErrors.id_number}
+          </Text>
+        )}
+        <TextInput
           label="Email"
           value={data.email}
           onChangeText={(text) =>
@@ -272,16 +292,27 @@ const SignUpPage = () => {
             {signupValidationErrors.confirmPassword}
           </Text>
         )}
+        <View style={styles.buttonContainer}>
+          <Button
+            disabled={isSignupPending}
+            mode="contained"
+            onPress={() => router.push("/(auth)")}
+            style={styles.buttonBack}
+            textColor="black"
+          >
+            BACK
+          </Button>
 
-        <Button
-        disabled={isSignupPending}
-          mode="contained"
-          onPress={handleSignUp}
-          style={styles.button}
-          buttonColor="#282726"
-        >
-          SUBMIT
-        </Button>
+          <Button
+            disabled={isSignupPending}
+            mode="contained"
+            onPress={handleSignUp}
+            style={styles.button}
+            buttonColor="#282726"
+          >
+            SUBMIT
+          </Button>
+        </View>
       </View>
       <CustomizedModal
         visible={isCheckEmailVisible}
@@ -378,6 +409,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#f5f5f5",
     alignSelf: "center",
+    overflow: "scroll",
   },
   logoContainer: {
     alignItems: "flex-start",
@@ -401,14 +433,29 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    marginBottom: 0,
+    marginBottom: 2,
   },
   button: {
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 12,
     width: Viewport.width * 0.3,
-    alignSelf: "flex-end",
+  },
+  buttonBack: {
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    width: Viewport.width * 0.3,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "black",
+    color: "black",
+  },
+  buttonContainer: {
+    marginTop: 6,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   modalContent: {
     backgroundColor: "#ECE1DC",

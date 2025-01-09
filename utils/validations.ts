@@ -9,6 +9,12 @@ export const validateInputs = (data: any, confirmPassword: string) => {
     errors.lastName = "Last name is required.";
   }
 
+  if (!data.id_number.trim()) {
+    errors.id_number = "ID number is required.";
+  } else if (!/^\d+$/.test(data.id_number)) {
+    errors.id_number = "ID number must contain only numbers.";
+  }
+
   if (!data.email.trim()) {
     errors.email = "Email is required.";
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
