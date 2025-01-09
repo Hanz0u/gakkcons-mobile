@@ -18,6 +18,7 @@ import {
   useRequestAppointment,
 } from "@/api/teacher/teacher.hooks";
 import { validateRequestAppointmentInputs } from "@/utils/validations";
+import { useNotification } from "@/api/notification/notification.hooks";
 
 export default function ConsultationScreen() {
   const toast = useToast();
@@ -35,6 +36,8 @@ export default function ConsultationScreen() {
 
   const { data: teacherData, isLoading: isGetTeacherLoading } =
     useGetTeachers(searchQuery);
+
+  useNotification();
 
   const {
     mutate: requestMutate,
@@ -596,7 +599,7 @@ export default function ConsultationScreen() {
                               fontSize: FontSizes.tiny,
                               fontFamily: "Montserrat",
                               color:
-                                appointment.status === "ongoing"
+                                appointment.status === "Confirmed"
                                   ? "#15B31B"
                                   : "#CD1616",
                             }}

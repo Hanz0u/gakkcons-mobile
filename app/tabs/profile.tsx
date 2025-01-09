@@ -10,6 +10,7 @@ import { useGetProfileInfo, useUpdateProfileInfo } from "@/api/user/user.hooks";
 import { validateUpdatePasswordInputs } from "@/utils/validations";
 import { removeToken } from "@/utils/token";
 import { socket } from "@/contexts/SocketContext";
+import { useNotification } from "@/api/notification/notification.hooks";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function ProfileScreen() {
   const { data: userInfo }: any = useGetProfileInfo();
   const [updateUserValidationErrors, setUpdateUserValidationErrors] =
     useState<any>({});
-
+  useNotification();
   const user = React.useMemo(() => {
     if (!userInfo) return [];
     return userInfo[1] || [];

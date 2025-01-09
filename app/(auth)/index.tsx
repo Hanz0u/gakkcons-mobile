@@ -8,13 +8,14 @@ import {
   Alert,
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 
 import { Viewport } from "@/styles/styles";
 import { useLoginUser, useVerifyUser } from "@/api/auth/auth.hooks";
 import CustomizedModal from "@/components/CustomizedModal";
 import CodeInput from "@/components/CodeInput";
+import { getToken } from "@/utils/token";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -22,6 +23,24 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchToken = async () => {
+        const token = await getToken();
+        setToken(token);
+      };
+
+      fetchToken();
+    }, [])
+  );
+
+  useEffect(() => {
+    if (token) {
+      router.push("/tabs");
+    }
+  }, [token, router]);
 
   const [isVerificationCodeVisible, setIsVerificationCodeVisible] =
     useState(false);
