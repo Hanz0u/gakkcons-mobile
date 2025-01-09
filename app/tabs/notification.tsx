@@ -25,8 +25,8 @@ export default function NotificationScreen() {
     setIsNotifPressed(true);
   };
   const handleCopyToClipboard = () => {
-    if (selectedNotification.link) {
-      Clipboard.setStringAsync(selectedNotification.link);
+    if (selectedNotification.meet_link) {
+      Clipboard.setStringAsync(selectedNotification.meet_link);
       Alert.alert("Copied to Clipboard", "The link has been copied!");
     } else {
       Alert.alert("Error", "No link to copy.");
