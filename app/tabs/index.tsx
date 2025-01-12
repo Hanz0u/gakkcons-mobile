@@ -540,26 +540,6 @@ export default function ConsultationScreen() {
                       color: "black",
                     }}
                   >
-                    date
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontFamily: "Montserrat",
-                      fontWeight: "bold",
-                      color: "black",
-                    }}
-                  >
-                    time
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontFamily: "Montserrat",
-                      fontWeight: "bold",
-                      color: "black",
-                    }}
-                  >
                     type
                   </Text>
                   <Text
@@ -596,24 +576,6 @@ export default function ConsultationScreen() {
                             justifyContent: "space-around",
                           }}
                         >
-                          <Text
-                            style={{
-                              fontSize: FontSizes.tiny,
-                              fontFamily: "Montserrat",
-                              color: "black",
-                            }}
-                          >
-                            {appointment.date ? appointment.date : "tbd"}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: FontSizes.tiny,
-                              fontFamily: "Montserrat",
-                              color: "black",
-                            }}
-                          >
-                            {appointment.time ? appointment.time : "tbd"}
-                          </Text>
                           <Text
                             style={{
                               fontSize: FontSizes.tiny,
