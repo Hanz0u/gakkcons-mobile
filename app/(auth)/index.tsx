@@ -23,24 +23,18 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
-      const fetchToken = async () => {
+      const checkToken = async () => {
         const token = await getToken();
-        setToken(token);
+        if (token) {
+          router.push("/tabs");
+        }
       };
-
-      fetchToken();
+      checkToken();
     }, [])
   );
-
-  useEffect(() => {
-    if (token) {
-      router.push("/tabs");
-    }
-  }, [token, router]);
 
   const [isVerificationCodeVisible, setIsVerificationCodeVisible] =
     useState(false);

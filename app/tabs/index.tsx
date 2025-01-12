@@ -9,6 +9,7 @@ import {
   Modal,
   Image,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { EvilIcons, Feather, Fontisto } from "@expo/vector-icons";
@@ -34,10 +35,17 @@ export default function ConsultationScreen() {
     useState<any>({});
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: teacherData, isLoading: isGetTeacherLoading } =
-    useGetTeachers(searchQuery);
+  const {
+    data: teacherData,
+    isLoading: isGetTeacherLoading,
+    refetch: refetchTeacherData,
+  } = useGetTeachers(searchQuery);
 
   useNotification();
+
+  const onRefreshTeacherData = React.useCallback(() => {
+    refetchTeacherData();
+  }, []);
 
   const {
     mutate: requestMutate,
@@ -218,6 +226,12 @@ export default function ConsultationScreen() {
           <Feather name="filter" size={40} color="black" />
         </View>
         <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={isGetTeacherLoading}
+              onRefresh={onRefreshTeacherData}
+            />
+          }
           data={teachers}
           style={{
             height: Viewport.height * 0.65,
@@ -526,26 +540,6 @@ export default function ConsultationScreen() {
                       color: "black",
                     }}
                   >
-                    date
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontFamily: "Montserrat",
-                      fontWeight: "bold",
-                      color: "black",
-                    }}
-                  >
-                    time
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontFamily: "Montserrat",
-                      fontWeight: "bold",
-                      color: "black",
-                    }}
-                  >
                     type
                   </Text>
                   <Text
@@ -582,24 +576,6 @@ export default function ConsultationScreen() {
                             justifyContent: "space-around",
                           }}
                         >
-                          <Text
-                            style={{
-                              fontSize: FontSizes.tiny,
-                              fontFamily: "Montserrat",
-                              color: "black",
-                            }}
-                          >
-                            {appointment.date ? appointment.date : "tbd"}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: FontSizes.tiny,
-                              fontFamily: "Montserrat",
-                              color: "black",
-                            }}
-                          >
-                            {appointment.time ? appointment.time : "tbd"}
-                          </Text>
                           <Text
                             style={{
                               fontSize: FontSizes.tiny,
