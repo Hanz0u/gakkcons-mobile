@@ -250,80 +250,95 @@ export default function ConsultationScreen() {
                 borderRadius: 10,
                 flexDirection: "row",
                 paddingTop: 5,
+                justifyContent: "space-between",
+                paddingRight: 20,
               }}
               onPress={() => handleRequestTeacherOpen(item)}
             >
-              <Feather
-                name="user"
-                size={50}
-                color="black"
-                style={{ marginTop: 13, marginLeft: 15 }}
-              />
-              <View style={{ flexDirection: "column", marginLeft: 15 }}>
-                <View style={{ flexDirection: "row", gap: 5 }}>
+              <View style={{ flexDirection: "row" }}>
+                <Feather
+                  name="user"
+                  size={50}
+                  color="black"
+                  style={{ marginTop: 13, marginLeft: 15 }}
+                />
+                <View style={{ flexDirection: "column", marginLeft: 15 }}>
+                  <View style={{ flexDirection: "row", gap: 5 }}>
+                    <Text
+                      style={{
+                        fontSize: Viewport.width * 0.02,
+                        fontFamily: "Montserrat",
+                        backgroundColor:
+                          item.faculty_mode === "Onsite"
+                            ? Colors.activeAccent
+                            : Colors.secondaryText,
+                        color:
+                          item.faculty_mode === "Onsite"
+                            ? Colors.secondaryBackground
+                            : "black",
+                        fontWeight: "500",
+                        padding: 4,
+                        borderTopLeftRadius: 5,
+                        borderBottomLeftRadius: 5,
+                      }}
+                    >
+                      ONSITE
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: Viewport.width * 0.02,
+                        fontFamily: "Montserrat",
+                        backgroundColor:
+                          item.faculty_mode === "Online"
+                            ? Colors.activeAccent
+                            : Colors.secondaryText,
+                        color:
+                          item.faculty_mode === "Online"
+                            ? Colors.secondaryBackground
+                            : "black",
+                        fontWeight: "500",
+                        padding: 4,
+                        borderTopRightRadius: 5,
+                        borderBottomRightRadius: 5,
+                      }}
+                    >
+                      ONLINE
+                    </Text>
+                  </View>
                   <Text
                     style={{
-                      fontSize: Viewport.width * 0.02,
+                      fontSize: FontSizes.normal,
+                      fontWeight: "bold",
                       fontFamily: "Montserrat",
-                      backgroundColor: item.isOnsite
-                        ? Colors.activeAccent
-                        : Colors.secondaryText,
-                      color: item.isOnsite
-                        ? Colors.secondaryBackground
-                        : "black",
-                      fontWeight: "500",
-                      padding: 4,
-                      borderTopLeftRadius: 5,
-                      borderBottomLeftRadius: 5,
                     }}
                   >
-                    ONSITE
+                    {/* {item.name} */}
+                    {item.name.length > 16
+                      ? `${item.name.substring(0, 16)}...`
+                      : item.name}
                   </Text>
                   <Text
                     style={{
-                      fontSize: Viewport.width * 0.02,
+                      fontSize: FontSizes.tiny,
                       fontFamily: "Montserrat",
-                      backgroundColor: item.isOnline
-                        ? Colors.activeAccent
-                        : Colors.secondaryText,
-                      color: item.isOnline
-                        ? Colors.secondaryBackground
-                        : "black",
-                      fontWeight: "500",
-                      padding: 4,
-                      borderTopRightRadius: 5,
-                      borderBottomRightRadius: 5,
                     }}
                   >
-                    ONLINE
+                    {item.subjects[0]}
                   </Text>
                 </View>
-                <Text
-                  style={{
-                    fontSize: FontSizes.normal,
-                    fontWeight: "bold",
-                    fontFamily: "Montserrat",
-                  }}
-                >
-                  {item.name}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: FontSizes.tiny,
-                    fontFamily: "Montserrat",
-                  }}
-                >
-                  {item.subjects[0]}
-                </Text>
               </View>
+
               <View
                 style={{
-                  backgroundColor: item.isActive ? "#15B31B" : "#CD1616",
+                  backgroundColor:
+                    item.faculty_mode === "Onsite" ||
+                    item.faculty_mode === "Online"
+                      ? "#15B31B"
+                      : "#CD1616",
                   width: 40,
                   height: 40,
                   borderRadius: 100,
                   alignSelf: "center",
-                  marginLeft: Viewport.width * 0.23,
                 }}
               />
             </TouchableOpacity>
