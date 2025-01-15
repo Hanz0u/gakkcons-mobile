@@ -123,12 +123,11 @@ export default function ProfileScreen() {
           alignItems: "center",
           justifyContent: "center",
           flex: 1,
-          gap: isEditPressed ? 30 : 0,
+          gap: isEditPressed ? 20 : 0,
         }}
       >
         <View style={{ position: "relative" }}>
-          <Image
-            source={require("@/assets/images/default-avatar.png")}
+          <View
             style={{
               borderRadius: 100,
               width: isEditPressed
@@ -137,28 +136,37 @@ export default function ProfileScreen() {
               height: isEditPressed
                 ? Viewport.height * 0.15
                 : Viewport.height * 0.23,
-            }}
-            resizeMode="contain"
-          />
-
-          <TouchableOpacity
-            onPress={() => setIsEditPressed(true)}
-            style={{
-              position: "absolute",
-              top: isEditPressed
-                ? Viewport.height * 0.1
-                : Viewport.height * 0.2,
-              padding: isEditPressed ? 20 : 10,
-              backgroundColor: "#9BA0A1",
+              backgroundColor: Colors.tertiaryBackground,
+              flexDirection: "row",
               alignItems: "center",
+              alignContent: "center",
               justifyContent: "center",
-              alignSelf: "center",
-              borderRadius: isEditPressed ? 100 : 10,
             }}
           >
-            {isEditPressed ? (
-              <AntDesign name="picture" size={24} color="white" />
-            ) : (
+            <Feather
+              name="user"
+              size={!isEditPressed ? 100 : 80}
+              color="gray"
+              style={{ alignSelf: "center" }}
+            />
+          </View>
+
+          {!isEditPressed && (
+            <TouchableOpacity
+              onPress={() => setIsEditPressed(true)}
+              style={{
+                position: "absolute",
+                top: isEditPressed
+                  ? Viewport.height * 0.1
+                  : Viewport.height * 0.2,
+                padding: isEditPressed ? 20 : 10,
+                backgroundColor: "#9BA0A1",
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+                borderRadius: isEditPressed ? 100 : 10,
+              }}
+            >
               <Text
                 style={{
                   color: "white",
@@ -169,8 +177,8 @@ export default function ProfileScreen() {
               >
                 EDIT
               </Text>
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
         </View>
         {isEditPressed ? (
           <EditProfile

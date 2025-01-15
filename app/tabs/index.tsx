@@ -10,6 +10,7 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { EvilIcons, Feather, Fontisto } from "@expo/vector-icons";
@@ -56,6 +57,10 @@ export default function ConsultationScreen() {
   } = useRequestAppointment();
 
   const handleRequestTeacherOpen = (item: any) => {
+    if (!item.faculty_mode || item.faculty_mode === "offline") {
+      Alert.alert("This instructor is not available. Please try again later.");
+      return;
+    }
     setSelectedTeacher(item);
     setIsRequestTeacherOpen(true);
   };
@@ -132,12 +137,21 @@ export default function ConsultationScreen() {
       }
 
       if (isRequestError) {
-        toast.show(requestErrors?.message, {
-          type: "danger",
-          placement: "top",
-          duration: 4000,
-          animationType: "slide-in",
-        });
+        if (
+          requestErrors.message.includes(
+            "You are not allowed to request an appointment with the same instructor twice in a day"
+          )
+        ) {
+          Alert.alert("Appointment Request Error", requestErrors.message);
+          return;
+        } else {
+          toast.show(requestErrors?.message, {
+            type: "danger",
+            placement: "top",
+            duration: 4000,
+            animationType: "slide-in",
+          });
+        }
       }
     }
 
@@ -160,7 +174,7 @@ export default function ConsultationScreen() {
           flex: 1,
           flexDirection: "column",
           gap: 20,
-          paddingTop: Viewport.height * 0.08,
+          paddingTop: Viewport.height * 0.05,
         }}
       >
         <View
@@ -326,7 +340,6 @@ export default function ConsultationScreen() {
                       fontFamily: "Montserrat",
                     }}
                   >
-                    {/* {item.name} */}
                     {item.name.length > 16
                       ? `${item.name.substring(0, 16)}...`
                       : item.name}
@@ -403,7 +416,9 @@ export default function ConsultationScreen() {
                   fontFamily: "Montserrat",
                 }}
               >
-                {selectedTeacher.name}
+                {selectedTeacher.name && selectedTeacher.name.length > 15
+                  ? `${selectedTeacher.name.substring(0, 15)}...`
+                  : selectedTeacher.name}
               </Text>
               <Text
                 style={{
@@ -590,7 +605,8 @@ export default function ConsultationScreen() {
                               fontSize: FontSizes.tiny,
                               fontFamily: "Montserrat",
                               color:
-                                appointment.status === "Confirmed"
+                                appointment.status === "Confirmed" ||
+                                appointment.status === "Completed"
                                   ? "#15B31B"
                                   : "#CD1616",
                             }}
