@@ -53,7 +53,7 @@ export default function NotificationScreen() {
           flex: 1,
           flexDirection: "column",
           gap: 20,
-          paddingTop: Viewport.height * 0.08,
+          paddingTop: Viewport.height * 0.05,
         }}
       >
         <View
@@ -85,6 +85,16 @@ export default function NotificationScreen() {
             paddingVertical: 20,
           }}
         >
+          {notifications.length === 0 && (
+            <Text
+              style={{
+                fontFamily: "Montserrat",
+                fontSize: FontSizes.normal,
+              }}
+            >
+              No notification at the moment.
+            </Text>
+          )}
           {notifications.map((notif) => (
             <TouchableOpacity
               onPress={() => handleNotification(notif)}
@@ -126,7 +136,7 @@ export default function NotificationScreen() {
                     alignItems: "center",
                   }}
                 >
-                  <Feather name="user" size={40} color="black" />
+                  <Feather name="user" size={40} color="gray" />
                 </View>
 
                 <View
