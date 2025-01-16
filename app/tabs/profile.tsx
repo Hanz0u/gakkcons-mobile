@@ -175,7 +175,7 @@ export default function ProfileScreen() {
                   fontWeight: "semibold",
                 }}
               >
-                EDIT
+                Edit
               </Text>
             </TouchableOpacity>
           )}
@@ -239,7 +239,7 @@ export default function ProfileScreen() {
                   color: "white",
                 }}
               >
-                Log out
+                Log Out
               </Text>
             </TouchableOpacity>
           </>

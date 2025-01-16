@@ -182,7 +182,7 @@ export default function ConsultationScreen() {
             flexDirection: "row",
             alignItems: "center",
             gap: 10,
-            paddingLeft: 15,
+            paddingLeft: 25,
           }}
         >
           <Text
@@ -213,11 +213,11 @@ export default function ConsultationScreen() {
             <TextInput
               value={searchQuery}
               onChangeText={(text) => setSearchQuery(text)}
-              placeholder="search"
+              placeholder="Search"
               placeholderTextColor={Colors.secondaryBackground}
               style={{
                 backgroundColor: Colors.tertiaryBackground,
-                width: Viewport.width * 0.75,
+                width: Viewport.width * 0.90,
                 height: Viewport.height * 0.06,
                 color: Colors.secondaryBackground,
                 fontFamily: "Montserrat",
@@ -228,16 +228,16 @@ export default function ConsultationScreen() {
             />
             <EvilIcons
               name="search"
-              size={24}
+              size={30}
               color={Colors.secondaryText}
               style={{
                 position: "absolute",
                 zIndex: 10,
-                left: Viewport.width * 0.65,
+                right: 10
               }}
             />
           </View>
-          <Feather name="filter" size={40} color="black" />
+         
         </View>
         <FlatList
           refreshControl={
@@ -310,7 +310,7 @@ export default function ConsultationScreen() {
                         borderBottomLeftRadius: 5,
                       }}
                     >
-                      ONSITE
+                      Onsite
                     </Text>
                     <Text
                       style={{
@@ -330,7 +330,7 @@ export default function ConsultationScreen() {
                         borderBottomRightRadius: 5,
                       }}
                     >
-                      ONLINE
+                      Online
                     </Text>
                   </View>
                   <Text
@@ -434,8 +434,8 @@ export default function ConsultationScreen() {
                 style={{
                   flexDirection: "row",
                   gap: 5,
-                  height: Viewport.height * 0.025,
-                  alignSelf: "flex-start",
+                  height: Viewport.height * 0.030,
+                  alignSelf: "center",
                 }}
               >
                 <TouchableOpacity
@@ -462,7 +462,7 @@ export default function ConsultationScreen() {
                       fontWeight: "500",
                     }}
                   >
-                    ONSITE
+                    Onsite
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -489,7 +489,7 @@ export default function ConsultationScreen() {
                       fontWeight: "500",
                     }}
                   >
-                    ONLINE
+                    Online
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -555,7 +555,7 @@ export default function ConsultationScreen() {
                       color: "black",
                     }}
                   >
-                    type
+                    Type
                   </Text>
                   <Text
                     style={{
@@ -565,7 +565,7 @@ export default function ConsultationScreen() {
                       color: "black",
                     }}
                   >
-                    status
+                    Status
                   </Text>
                 </View>
                 <ScrollView
@@ -624,7 +624,7 @@ export default function ConsultationScreen() {
               <TextInput
                 value={reason}
                 onChangeText={(text) => setReason(text)}
-                placeholder="reason..."
+                placeholder="Reason..."
                 style={{
                   backgroundColor: "white",
                   color: "black",
@@ -663,7 +663,7 @@ export default function ConsultationScreen() {
                 fontSize: FontSizes.normal,
               }}
             >
-              {isProceedNotPressed ? "Proceed" : "Send request"}
+              {isProceedNotPressed ? "Proceed" : "Send Request"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -726,7 +726,7 @@ export default function ConsultationScreen() {
             >
               <Feather name="check-circle" size={30} color="white" />
               <Text style={{ color: "white", fontSize: FontSizes.small }}>
-                YES
+                Yes
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -743,7 +743,7 @@ export default function ConsultationScreen() {
             >
               <Fontisto name="close" size={30} color="white" />
               <Text style={{ color: "white", fontSize: FontSizes.small }}>
-                NO
+                No
               </Text>
             </TouchableOpacity>
           </View>

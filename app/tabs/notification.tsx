@@ -102,7 +102,7 @@ export default function NotificationScreen() {
             flexDirection: "row",
             alignItems: "center",
             gap: 10,
-            paddingLeft: 15,
+            paddingLeft: 25,
           }}
         >
           <Text
