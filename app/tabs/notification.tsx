@@ -1,6 +1,14 @@
 import { Colors, FontSizes, Viewport } from "@/styles/styles";
-import { ScrollView, Text, TouchableOpacity, View, Alert } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  RefreshControl,
+} from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import moment from "moment";
 import CustomizedModal from "@/components/CustomizedModal";
 import React, { useEffect, useState } from "react";
 import * as Clipboard from "expo-clipboard";
@@ -46,6 +54,39 @@ export default function NotificationScreen() {
     if (!notificationData || !Array.isArray(notificationData)) return [];
     return Array.isArray(notificationData[1]) ? notificationData[1] : [];
   }, [notificationData]);
+
+  const formatGroupLabel = (date: any) => {
+    const now = moment();
+    const notificationDate = moment(date);
+
+    if (notificationDate.isSame(now, "day")) {
+      return "Today";
+    } else if (notificationDate.isSame(moment().subtract(1, "day"), "day")) {
+      return "Yesterday";
+    } else if (now.diff(notificationDate, "days") < 4) {
+      return `${now.diff(notificationDate, "days")} days ago`;
+    } else {
+      return notificationDate.format("MMM DD, YYYY");
+    }
+  };
+
+  const groupNotificationsByDate = (notifications: any) => {
+    return notifications.reduce((groups: any, notif: any) => {
+      const label = formatGroupLabel(notif.updated_at);
+      if (!groups[label]) {
+        groups[label] = [];
+      }
+      groups[label].push(notif);
+      return groups;
+    }, {});
+  };
+
+  const groupedNotifications = groupNotificationsByDate(notifications);
+
+  const onRefresh = React.useCallback(() => {
+    refetch();
+  }, []);
+
   return (
     <>
       <View
@@ -78,12 +119,18 @@ export default function NotificationScreen() {
           contentContainerStyle={{
             alignItems: "center",
             justifyContent: "center",
-            gap: 20,
+            gap: 0,
           }}
           style={{
             width: Viewport.width * 1,
             paddingVertical: 20,
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isGetNotificationLoading}
+              onRefresh={onRefresh}
+            />
+          }
         >
           {notifications.length === 0 && (
             <Text
@@ -95,82 +142,90 @@ export default function NotificationScreen() {
               No notification at the moment.
             </Text>
           )}
-          {notifications.map((notif) => (
-            <TouchableOpacity
-              onPress={() => handleNotification(notif)}
-              key={notif.appointment_id}
-              style={{
-                height: Viewport.height * 0.2,
-                width: Viewport.width * 1,
-                paddingHorizontal: 15,
-                gap: 10,
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: "Montserrat",
-                  fontWeight: "bold",
-                  fontSize: FontSizes.medium,
-                }}
-              >
-                {notif.date}
-              </Text>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                  gap: 15,
-                  padding: 10,
-                  borderRadius: 8,
-                  flexWrap: "wrap",
-                }}
-              >
-                <View
+          <View>
+            {Object.entries(groupedNotifications).map(([date, notifs]: any) => (
+              <View key={date}>
+                <Text
                   style={{
-                    backgroundColor: "#444444",
-                    width: 70,
-                    height: 70,
-                    borderRadius: 100,
-                    justifyContent: "center",
-                    alignItems: "center",
+                    fontFamily: "Montserrat",
+                    fontWeight: "bold",
+                    fontSize: FontSizes.medium,
+                    paddingLeft: 30,
                   }}
                 >
-                  <Feather name="user" size={40} color="gray" />
-                </View>
+                  {date}
+                </Text>
 
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "column",
-                  }}
-                >
-                  <Text
+                {notifs.map((notif: any) => (
+                  <TouchableOpacity
+                    onPress={() => handleNotification(notif)}
+                    key={notif.appointment_id}
                     style={{
-                      fontFamily: "Montserrat",
-                      fontWeight: "bold",
-                      fontSize: FontSizes.normal,
+                      height: Viewport.height * 0.2,
+                      width: Viewport.width * 1,
+                      paddingHorizontal: 15,
+                      gap: 20,
                     }}
                   >
-                    {notif.faculty_name}
-                  </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "flex-start",
+                        gap: 15,
+                        padding: 10,
+                        borderRadius: 8,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: "#444444",
+                          width: 70,
+                          height: 70,
+                          borderRadius: 100,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          alignSelf: "center",
+                        }}
+                      >
+                        <Feather name="user" size={40} color="gray" />
+                      </View>
 
-                  <Text
-                    style={{
-                      fontFamily: "Montserrat",
-                      fontSize: FontSizes.small,
-                      lineHeight: 20,
-                    }}
-                    numberOfLines={4}
-                    ellipsizeMode="tail"
-                  >
-                    {notif.status === "Confirmed" &&
-                      `${notif.faculty_name} has accepted your consultation request. Venue: ${notif.mode}`}
-                  </Text>
-                </View>
+                      <View style={{ flex: 1, flexDirection: "column" }}>
+                        <Text
+                          style={{
+                            fontFamily: "Montserrat",
+                            fontWeight: "bold",
+                            fontSize: FontSizes.normal,
+                          }}
+                        >
+                          {notif.faculty_name}
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: "Montserrat",
+                            fontSize: FontSizes.small,
+                            lineHeight: 20,
+                          }}
+                          numberOfLines={4}
+                          ellipsizeMode="tail"
+                        >
+                          {notif.status === "Confirmed" &&
+                            `${
+                              notif.faculty_name
+                            } has accepted your consultation request. Venue: ${
+                              notif.mode
+                            }. Date: ${moment(notif.scheduled_date).format(
+                              "MMM DD, YYYY [at] hh:mm A"
+                            )}`}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
               </View>
-            </TouchableOpacity>
-          ))}
+            ))}
+          </View>
         </ScrollView>
       </View>
       <CustomizedModal
