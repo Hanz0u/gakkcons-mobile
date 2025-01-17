@@ -27,6 +27,6 @@ export const Colors = {
   danger: "#FF3300",
   activeAccent: "#07181F",
   inactiveAccent: "#D1C8C3",
-  buttonBGColor: "#9BA0A1",
+  buttonBGColor: "#228B22",
   error: "#DF1616",
 };
