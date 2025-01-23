@@ -217,7 +217,7 @@ export default function ConsultationScreen() {
               placeholderTextColor={Colors.secondaryBackground}
               style={{
                 backgroundColor: Colors.tertiaryBackground,
-                width: Viewport.width * 0.90,
+                width: Viewport.width * 0.9,
                 height: Viewport.height * 0.06,
                 color: Colors.secondaryBackground,
                 fontFamily: "Montserrat",
@@ -233,11 +233,10 @@ export default function ConsultationScreen() {
               style={{
                 position: "absolute",
                 zIndex: 10,
-                right: 10
+                right: 10,
               }}
             />
           </View>
-         
         </View>
         <FlatList
           refreshControl={
@@ -257,7 +256,7 @@ export default function ConsultationScreen() {
           ListEmptyComponent={() => (
             <View style={{ padding: 20, alignItems: "center" }}>
               <Text style={{ color: "white" }}>
-                {isGetTeacherLoading ? "Loading..." : "No teachers found"}
+                {isGetTeacherLoading ? "Loading..." : "No teachers available"}
               </Text>
             </View>
           )}
@@ -434,7 +433,7 @@ export default function ConsultationScreen() {
                 style={{
                   flexDirection: "row",
                   gap: 5,
-                  height: Viewport.height * 0.030,
+                  height: Viewport.height * 0.03,
                   alignSelf: "center",
                 }}
               >
@@ -644,28 +643,62 @@ export default function ConsultationScreen() {
               )}
             </>
           )}
-
-          <TouchableOpacity
+          <View
             style={{
-              backgroundColor: Colors.buttonBGColor,
-              width: Viewport.width * 0.5,
-              height: Viewport.height * 0.07,
+              flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
-              alignSelf: "center",
+              justifyContent: "space-around",
             }}
-            onPress={handleProceed}
           >
-            <Text
+            <TouchableOpacity
               style={{
-                color: "white",
-                fontFamily: "Montserrat",
-                fontSize: FontSizes.normal,
+                backgroundColor: Colors.inactiveElement,
+                padding: 20,
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+                borderRadius: 10,
+              }}
+              onPress={() => {
+                setIsRequestTeacherOpen(false), setIsProceedNotPressed(true);
+                setSelectedMode("");
+                setAppointmentValidationErrors([]);
+                setReason("");
               }}
             >
-              {isProceedNotPressed ? "Proceed" : "Send Request"}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "Montserrat",
+                  fontSize: FontSizes.small,
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors.buttonBGColor,
+                padding: 20,
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+                borderRadius: 10,
+              }}
+              onPress={handleProceed}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "Montserrat",
+                  fontSize: FontSizes.small,
+                }}
+              >
+                {isProceedNotPressed ? "Proceed" : "Send Request"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </CustomizedModal>
       <CustomizedModal
