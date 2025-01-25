@@ -742,6 +742,23 @@ export default function ConsultationScreen() {
           </View>
           <View style={{ alignSelf: "center", flexDirection: "row", gap: 20 }}>
             <TouchableOpacity
+              style={{
+                backgroundColor: Colors.error,
+                width: Viewport.width * 0.37,
+                height: Viewport.height * 0.08,
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+              }}
+              onPress={() => setIsTeacherBusy(false)}
+            >
+              <Fontisto name="close" size={30} color="white" />
+              <Text style={{ color: "white", fontSize: FontSizes.small }}>
+                No
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 setIsTeacherBusy(false),
                   setIsRequestTeacherOpen(true),
@@ -760,23 +777,6 @@ export default function ConsultationScreen() {
               <Feather name="check-circle" size={30} color="white" />
               <Text style={{ color: "white", fontSize: FontSizes.small }}>
                 Yes
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: Colors.error,
-                width: Viewport.width * 0.37,
-                height: Viewport.height * 0.08,
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 10,
-              }}
-              onPress={() => setIsTeacherBusy(false)}
-            >
-              <Fontisto name="close" size={30} color="white" />
-              <Text style={{ color: "white", fontSize: FontSizes.small }}>
-                No
               </Text>
             </TouchableOpacity>
           </View>

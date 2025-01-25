@@ -11,7 +11,7 @@ import { TextInput, Button } from "react-native-paper";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 
-import { Viewport } from "@/styles/styles";
+import { Colors, FontSizes, Viewport } from "@/styles/styles";
 import { useLoginUser, useVerifyUser } from "@/api/auth/auth.hooks";
 import CustomizedModal from "@/components/CustomizedModal";
 import CodeInput from "@/components/CodeInput";
@@ -230,7 +230,7 @@ const LoginPage = () => {
         visible={isVerificationCodeVisible}
         animationType="fade"
         transparent={true}
-        onRequestClose={handleVerificationCodeSubmit}
+        onRequestClose={() => setIsVerificationCodeVisible(false)}
       >
         <View style={styles.modalContent}>
           <View style={styles.modalContentChild}>
@@ -247,12 +247,61 @@ const LoginPage = () => {
               wait! resending the verification code to your email. 1:00
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.buttonModal}
-            onPress={handleVerificationCodeSubmit}
+
+          <View
+            style={{
+              marginTop: 20,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 20,
+            }}
           >
-            <Text style={styles.buttonText}>DONE</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors.inactiveElement,
+                paddingVertical: 15,
+                paddingHorizontal: 20,
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+                borderRadius: 10,
+              }}
+              onPress={() => setIsVerificationCodeVisible(false)}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "Montserrat",
+                  fontSize: FontSizes.small,
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors.buttonBGColor,
+                paddingVertical: 15,
+                paddingHorizontal: 20,
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center",
+                borderRadius: 10,
+              }}
+              onPress={handleVerificationCodeSubmit}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "Montserrat",
+                  fontSize: FontSizes.small,
+                }}
+              >
+                Submit
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </CustomizedModal>
     </>
