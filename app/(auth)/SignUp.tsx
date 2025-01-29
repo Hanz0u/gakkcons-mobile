@@ -383,7 +383,7 @@ const SignUpPage = () => {
                 marginBottom: 10,
               }}
             >
-              Welcome to Gakkcons!!!
+              Welcome to Consultation Appointment System
             </Text>
             <Text style={styles.text}>
               Please proceed to the log in to start

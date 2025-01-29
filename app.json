@@ -1,12 +1,12 @@
 {
   "expo": {
     "entryPoint": "./node_modules/expo-router/entry",
-    "name": "gakkcons",
-    "slug": "gakkcons",
+    "name": "Consultation Appointment System",
+    "slug": "Consultation Appointment System",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo2.png",
-    "scheme": "gakkco",
+    "scheme": "Consultation Appointment System",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -22,17 +22,14 @@
         "foregroundImage": "./assets/images/logo2.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.gakkcons.gakkcons"
+      "package": "com.ConsultationAppointmentSystem.ConsultationAppointmentSystem"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/logo2.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font"
-    ],
+    "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true
     },
