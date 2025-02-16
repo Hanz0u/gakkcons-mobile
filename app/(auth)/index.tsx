@@ -165,7 +165,7 @@ const LoginPage = () => {
     <>
       <View style={styles.container}>
         <Image
-          source={require("../../assets/images/logo2.png")}
+          source={require("../../assets/images/logo.png")}
           style={styles.logo}
         />
         <Text style={styles.title}>SIGN IN</Text>

@@ -6,12 +6,12 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Modal,
   Image,
   ScrollView,
   RefreshControl,
   Alert,
 } from "react-native";
+import moment from "moment";
 import { useToast } from "react-native-toast-notifications";
 import { EvilIcons, Feather, Fontisto } from "@expo/vector-icons";
 import CustomizedModal from "@/components/CustomizedModal";
@@ -21,9 +21,11 @@ import {
 } from "@/api/teacher/teacher.hooks";
 import { validateRequestAppointmentInputs } from "@/utils/validations";
 import { useNotification } from "@/api/notification/notification.hooks";
+import { useSocket } from "@/contexts/SocketContext";
 
 export default function ConsultationScreen() {
   const toast = useToast();
+  const io = useSocket();
   const [isRequestTeacherOpen, setIsRequestTeacherOpen] =
     useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -56,13 +58,33 @@ export default function ConsultationScreen() {
     error: requestErrors,
   } = useRequestAppointment();
 
+  io.on("faculty_active_status", () => {
+    refetchTeacherData();
+  });
+
   const handleRequestTeacherOpen = (item: any) => {
     if (!item.faculty_mode || item.faculty_mode === "offline") {
-      Alert.alert("This instructor is not available. Please try again later.");
-      return;
+      Alert.alert(
+        "This instructor is not available.",
+        "Do you want to proceed?",
+        [
+          {
+            text: "No",
+            onPress: () => console.log("No Pressed"),
+          },
+          {
+            text: "Yes",
+            onPress: () => {
+              setSelectedTeacher(item);
+              setIsRequestTeacherOpen(true);
+            },
+          },
+        ]
+      );
+    } else {
+      setSelectedTeacher(item);
+      setIsRequestTeacherOpen(true);
     }
-    setSelectedTeacher(item);
-    setIsRequestTeacherOpen(true);
   };
 
   const handleProceed = () => {
@@ -137,11 +159,7 @@ export default function ConsultationScreen() {
       }
 
       if (isRequestError) {
-        if (
-          requestErrors.message.includes(
-            "You are not allowed to request an appointment with the same instructor twice in a day"
-          )
-        ) {
+        if (requestErrors.message.includes("You already")) {
           Alert.alert("Appointment Request Error", requestErrors.message);
           return;
         } else {
@@ -356,17 +374,35 @@ export default function ConsultationScreen() {
 
               <View
                 style={{
-                  backgroundColor:
-                    item.faculty_mode === "Onsite" ||
-                    item.faculty_mode === "Online"
-                      ? "#15B31B"
-                      : "#CD1616",
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  alignSelf: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              />
+              >
+                <View
+                  style={{
+                    backgroundColor:
+                      item.faculty_mode === "Onsite" ||
+                      item.faculty_mode === "Online"
+                        ? "#15B31B"
+                        : "#CD1616",
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    alignSelf: "center",
+                  }}
+                />
+                {item.last_active && (
+                  <Text
+                    style={{
+                      fontSize: FontSizes.tiny,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    {moment(item.last_active).fromNow()}
+                  </Text>
+                )}
+              </View>
             </TouchableOpacity>
           )}
         />
