@@ -307,7 +307,7 @@ export default function ConsultationScreen() {
                   color="black"
                   style={{ marginTop: 13, marginLeft: 15 }}
                 />
-                <View style={{ flexDirection: "column", marginLeft: 15 }}>
+                <View style={{ flexDirection: "column", marginLeft: 10 }}>
                   <View style={{ flexDirection: "row", gap: 5 }}>
                     <Text
                       style={{
@@ -377,6 +377,8 @@ export default function ConsultationScreen() {
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
+                  width: Viewport.width * 0.15,
+                  gap: 3,
                 }}
               >
                 <View
@@ -392,14 +394,23 @@ export default function ConsultationScreen() {
                     alignSelf: "center",
                   }}
                 />
-                {item.last_active && (
+                {item.last_active ? (
                   <Text
                     style={{
-                      fontSize: FontSizes.tiny,
+                      fontSize: Viewport.width * 0.02,
                       fontFamily: "Montserrat",
                     }}
                   >
                     {moment(item.last_active).fromNow()}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: Viewport.width * 0.02,
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Available
                   </Text>
                 )}
               </View>
