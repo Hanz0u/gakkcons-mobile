@@ -358,8 +358,8 @@ export default function ConsultationScreen() {
                       width: Viewport.width * 0.45,
                     }}
                   >
-                    {item.name.length > 16
-                      ? `${item.name.substring(0, 16)}...`
+                    {item.name.length > 30
+                      ? `${item.name.substring(0, 30)}...`
                       : item.name}
                   </Text>
                   <Text
