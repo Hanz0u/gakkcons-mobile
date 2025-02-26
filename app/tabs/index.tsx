@@ -362,14 +362,14 @@ export default function ConsultationScreen() {
                       ? `${item.name.substring(0, 30)}...`
                       : item.name}
                   </Text>
-                  <Text
+                  {/* <Text
                     style={{
                       fontSize: FontSizes.tiny,
                       fontFamily: "Montserrat",
                     }}
                   >
                     {item.subjects[0]}
-                  </Text>
+                  </Text> */}
                 </View>
               </View>
 
