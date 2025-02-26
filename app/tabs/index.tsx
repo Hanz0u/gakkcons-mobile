@@ -355,6 +355,7 @@ export default function ConsultationScreen() {
                       fontSize: FontSizes.normal,
                       fontWeight: "bold",
                       fontFamily: "Montserrat",
+                      width: Viewport.width * 0.45,
                     }}
                   >
                     {item.name.length > 16
@@ -404,14 +405,27 @@ export default function ConsultationScreen() {
                     {moment(item.last_active).fromNow()}
                   </Text>
                 ) : (
-                  <Text
-                    style={{
-                      fontSize: Viewport.width * 0.02,
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Available
-                  </Text>
+                  <>
+                    {!item.faculty_mode || item.faculty_mode === "offline" ? (
+                      <Text
+                        style={{
+                          fontSize: Viewport.width * 0.02,
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        Inactive
+                      </Text>
+                    ) : (
+                      <Text
+                        style={{
+                          fontSize: Viewport.width * 0.02,
+                          fontFamily: "Montserrat",
+                        }}
+                      >
+                        Available
+                      </Text>
+                    )}
+                  </>
                 )}
               </View>
             </TouchableOpacity>
